@@ -172,36 +172,43 @@ export async function translateHtml(html, targetLang) {
 }
 
 // ─── Multi-proxy fetcher ───
-const PROXIES = [
-  (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-  (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-  (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+// ─── CORS proxy system with remembered-winner to minimize failed requests ───
+const PROXY_CONFIGS = [
+  { id: "allorigins-raw", make: (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`, parse: null },
+  { id: "codetabs", make: (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`, parse: null },
+  { id: "allorigins-get", make: (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, parse: (text) => { const j = JSON.parse(text); if (j.contents) return j.contents; throw new Error("No contents"); } },
 ];
 
+// Remember which proxy worked last to try it first (avoids extra failed requests)
+let lastWorkingProxy = 0;
+
 async function fetchViaProxy(feedUrl, idx) {
-  const res = await fetch(PROXIES[idx](feedUrl), { signal: AbortSignal.timeout(8000) });
+  const cfg = PROXY_CONFIGS[idx];
+  const res = await fetch(cfg.make(feedUrl), { signal: AbortSignal.timeout(6000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   let text = await res.text();
-  if (idx === 3) {
-    const json = JSON.parse(text);
-    if (json.contents) text = json.contents;
-    else throw new Error("No contents");
-  }
+  if (cfg.parse) text = cfg.parse(text);
   return text;
 }
 
-// Fetch raw HTML — race all proxies in parallel for speed
-async function fetchHtmlViaProxy(url) {
-  const result = await Promise.any(
-    PROXIES.map((_, i) =>
-      fetchViaProxy(url, i).catch(err => {
-        // proxy failed, try next
-        throw err;
-      })
-    )
-  );
-  return result;
+// Try last-known-good proxy first, then fall back sequentially
+async function fetchWithProxyFallback(url) {
+  // Try the last working proxy first
+  try {
+    const text = await fetchViaProxy(url, lastWorkingProxy);
+    return text;
+  } catch { /* fall through */ }
+
+  // Try remaining proxies sequentially (minimal console noise)
+  for (let i = 0; i < PROXY_CONFIGS.length; i++) {
+    if (i === lastWorkingProxy) continue;
+    try {
+      const text = await fetchViaProxy(url, i);
+      lastWorkingProxy = i; // remember this one for next time
+      return text;
+    } catch { /* try next */ }
+  }
+  throw new Error("All proxies failed");
 }
 
 // ─── Feed cache (stale-while-revalidate) ───
@@ -279,13 +286,9 @@ export async function fetchRSSFeed(feedUrl, feedName) {
   const cached = getCachedFeed(feedUrl);
   if (cached?.fresh) return cached.data;
 
-  // Race all proxies in parallel — first valid response wins
   try {
-    const result = await Promise.any(
-      PROXIES.map((_, i) =>
-        fetchViaProxy(feedUrl, i).then(xmlText => parseRSSItems(xmlText, feedName))
-      )
-    );
+    const xmlText = await fetchWithProxyFallback(feedUrl);
+    const result = parseRSSItems(xmlText, feedName);
     setCachedFeed(feedUrl, result);
     return result;
   } catch {
@@ -385,7 +388,7 @@ export async function fetchArticleContent(url) {
   const { Readability } = await import("@mozilla/readability");
   const DOMPurify = (await import("dompurify")).default;
 
-  const html = await fetchHtmlViaProxy(url);
+  const html = await fetchWithProxyFallback(url);
   const doc = new DOMParser().parseFromString(html, "text/html");
 
   // Set the base URL so relative links/images resolve correctly

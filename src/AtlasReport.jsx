@@ -225,20 +225,27 @@ export default function AtlasReport() {
     return () => { cancelled = true; };
   }, [selectedLanguage, articles, visibleCount, loading]);
 
-  // Auto-detect country on first load
+  // Auto-detect country from timezone (no network request, no console errors)
   useEffect(() => {
     if (searchParams.get("country") || geoDetected) return;
-    (async () => {
-      try {
-        const res = await fetch("https://freeipapi.com/api/json/", { signal: AbortSignal.timeout(3000) });
-        const data = await res.json();
-        const code = data.countryCode;
-        if (code && geoCountryMap[code]) {
-          setSelectedCountry(geoCountryMap[code]);
-        }
-      } catch { /* silently fall back to ALL */ }
-      setGeoDetected(true);
-    })();
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      const tzCountryMap = {
+        "America/New_York": "US", "America/Chicago": "US", "America/Denver": "US", "America/Los_Angeles": "US",
+        "America/Toronto": "CA", "America/Vancouver": "CA", "America/Mexico_City": "MX", "America/Sao_Paulo": "BR",
+        "America/Argentina/Buenos_Aires": "AR", "Europe/London": "GB", "Europe/Paris": "FR", "Europe/Berlin": "DE",
+        "Europe/Rome": "IT", "Europe/Madrid": "ES", "Europe/Warsaw": "PL", "Europe/Kiev": "UA", "Europe/Istanbul": "TR",
+        "Asia/Tokyo": "JP", "Asia/Shanghai": "CN", "Asia/Kolkata": "IN", "Asia/Seoul": "KR",
+        "Asia/Jakarta": "ID", "Asia/Manila": "PH", "Asia/Singapore": "SG", "Asia/Dubai": "AE",
+        "Asia/Riyadh": "SA", "Asia/Jerusalem": "IL", "Australia/Sydney": "AU",
+        "Africa/Lagos": "NG", "Africa/Johannesburg": "ZA", "Africa/Cairo": "EG", "Africa/Nairobi": "KE",
+      };
+      const code = tzCountryMap[tz];
+      if (code && geoCountryMap[code]) {
+        setSelectedCountry(geoCountryMap[code]); // eslint-disable-line react-hooks/set-state-in-effect
+      }
+    } catch { /* fall back to ALL */ }
+    setGeoDetected(true);
   }, [searchParams, geoDetected]);
 
   // Sync URL search params and html lang
