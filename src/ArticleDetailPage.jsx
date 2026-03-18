@@ -1,11 +1,40 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
-import { ArrowLeft, ArrowUpRight, Clock, Globe, Loader, Languages } from "lucide-react";
-import { theme, f, uiStrings } from "./shared/theme";
+import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowUpRight, Clock, Globe, Loader, Languages, Search } from "lucide-react";
+import { f, uiStrings } from "./shared/theme";
 import { formatFullDate, formatTime, getCachedArticle, getCachedArticles, fetchArticleContent, translateText, translateHtml } from "./shared/utils";
+import { useTheme } from "./shared/ThemeContext";
+
+// ─── Reading Progress Bar ───
+function ReadingProgress({ theme }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) { setProgress(0); return; }
+      setProgress(Math.min((window.scrollY / docHeight) * 100, 100));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div style={{
+      position: "fixed", top: 0, left: 0, width: "100%", height: 3,
+      zIndex: 100, background: "transparent",
+    }}>
+      <div style={{
+        height: "100%", width: `${progress}%`,
+        background: theme.accent,
+        transition: "width 0.1s linear",
+      }} />
+    </div>
+  );
+}
 
 // ─── Content Loading Skeleton ───
-function ContentSkeleton() {
+function ContentSkeleton({ theme }) {
   return (
     <div style={{ padding: "8px 0" }} aria-busy="true" aria-label="Loading article content">
       {[100, 95, 88, 70, 98, 82, 60, 96, 75, 90, 45].map((w, i) => (
@@ -19,8 +48,8 @@ function ContentSkeleton() {
   );
 }
 
-// ─── Slim Header (extracted to avoid re-mount on every render) ───
-function SlimHeader({ t }) {
+// ─── Slim Header ───
+function SlimHeader({ t, theme }) {
   return (
     <div style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -47,18 +76,15 @@ function SlimHeader({ t }) {
 export default function ArticleDetailPage() {
   const { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { theme } = useTheme();
 
-  // Get language from URL search params
   const lang = new URLSearchParams(location.search).get("lang") || "en";
   const t = { ...uiStrings.en, ...(uiStrings[lang] || {}) };
 
-  // 1. Try router state first, 2. Fallback to sessionStorage
   const article = location.state?.article || getCachedArticle(id);
 
-  // Full article content: { status: "idle" | "loading" | "done" | "error", data: null | object }
   const [content, setContent] = useState({ status: "idle", data: null });
-
-  // Translation state
   const [showTranslated, setShowTranslated] = useState(lang !== "en");
   const [translatedTitle, setTranslatedTitle] = useState(null);
   const [translatedContent, setTranslatedContent] = useState(null);
@@ -70,13 +96,23 @@ export default function ArticleDetailPage() {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [id]);
 
-  // Fetch full article content — setState is intentional for data fetching
+  // Keyboard: Escape goes back
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape" && e.target.tagName !== "INPUT") {
+        navigate("/");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navigate]);
+
+  // Fetch full article content
   useEffect(() => {
     if (!article?.link || article.link === "#") return;
     let cancelled = false;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setContent({ status: "loading", data: null });
+    setContent({ status: "loading", data: null }); // eslint-disable-line react-hooks/set-state-in-effect
     fetchArticleContent(article.link)
       .then(result => { if (!cancelled) setContent({ status: "done", data: result }); })
       .catch(() => { if (!cancelled) setContent({ status: "error", data: null }); });
@@ -88,10 +124,10 @@ export default function ArticleDetailPage() {
   const contentLoading = content.status === "loading";
   const contentError = content.status === "error";
 
-  // Translate article when content is ready and language is not English
+  // Translate article
   useEffect(() => {
     if (lang === "en" || !showTranslated) {
-      setTranslatedTitle(null);
+      setTranslatedTitle(null); // eslint-disable-line react-hooks/set-state-in-effect
       setTranslatedContent(null);
       setTranslatedDesc(null);
       return;
@@ -101,17 +137,14 @@ export default function ArticleDetailPage() {
     setIsTranslating(true);
 
     (async () => {
-      // Translate title
       if (article?.title) {
         const trTitle = await translateText(article.title, lang);
         if (!cancelled) setTranslatedTitle(trTitle);
       }
-      // Translate description (fallback)
       if (article?.description) {
         const trDesc = await translateText(article.description, lang);
         if (!cancelled) setTranslatedDesc(trDesc);
       }
-      // Translate full content HTML
       if (fullContent?.content) {
         const trHtml = await translateHtml(fullContent.content, lang);
         if (!cancelled) setTranslatedContent(trHtml);
@@ -122,7 +155,7 @@ export default function ArticleDetailPage() {
     return () => { cancelled = true; };
   }, [lang, showTranslated, article?.title, article?.description, fullContent?.content]);
 
-  // Get related articles from same source
+  // Related articles from same source
   const relatedArticles = useMemo(() => {
     if (!article) return [];
     const cached = getCachedArticles();
@@ -137,31 +170,35 @@ export default function ArticleDetailPage() {
     try { return new URL(article.link).hostname.replace("www.", ""); } catch { return article.source; }
   }, [article]);
 
-  // ─── Not Found State ───
+  // ─── Not Found / Direct Link State ───
   if (!article) {
     return (
-      <div style={{ background: theme.bg, minHeight: "100vh", fontFamily: f.body }}>
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px" }}>
-          <SlimHeader t={t} />
-          <div style={{ textAlign: "center", padding: "120px 0" }}>
+      <div style={{ background: theme.bg, minHeight: "100vh", fontFamily: f.body, transition: "background 0.3s ease" }}>
+        <div className="article-page-container" style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px" }}>
+          <SlimHeader t={t} theme={theme} />
+          <div style={{ textAlign: "center", padding: "100px 0" }}>
+            <Globe size={48} strokeWidth={0.8} color={theme.rule} style={{ marginBottom: 24 }} />
             <h2 style={{
               fontFamily: f.display, fontSize: 28, fontWeight: 400,
               color: theme.ink, marginBottom: 12,
             }}>{t.articleNotFound}</h2>
             <p style={{
               fontFamily: f.body, fontSize: 15, color: theme.dim,
-              fontStyle: "italic", marginBottom: 32,
+              fontStyle: "italic", marginBottom: 12, maxWidth: 400, margin: "0 auto 32px",
+              lineHeight: 1.6,
             }}>{t.articleExpired}</p>
-            <Link to="/" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "12px 24px", background: theme.ink, color: theme.bg,
-              fontFamily: f.sans, fontSize: 13, fontWeight: 600,
-              textDecoration: "none", letterSpacing: 0.3, transition: "opacity 0.15s ease-out",
-            }}
-              onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-              onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
-              {t.returnHome} <ArrowUpRight size={14} strokeWidth={2} />
-            </Link>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+              <Link to="/" style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "12px 24px", background: theme.ink, color: theme.bg,
+                fontFamily: f.sans, fontSize: 13, fontWeight: 600,
+                textDecoration: "none", letterSpacing: 0.3, transition: "opacity 0.15s ease-out",
+              }}
+                onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+                onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
+                <Search size={14} strokeWidth={2} /> {t.returnHome}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -170,10 +207,11 @@ export default function ArticleDetailPage() {
 
   // ─── Article Detail ───
   return (
-    <div style={{ background: theme.bg, minHeight: "100vh", fontFamily: f.body, animation: "fadeIn 0.25s ease-out" }}>
-      <div style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px" }}>
+    <div style={{ background: theme.bg, minHeight: "100vh", fontFamily: f.body, transition: "background 0.3s ease" }}>
+      <ReadingProgress theme={theme} />
 
-        <SlimHeader t={t} />
+      <div className="article-page-container" style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px" }}>
+        <SlimHeader t={t} theme={theme} />
 
         {/* ─── Article Meta ─── */}
         <div style={{ padding: "32px 0 0" }}>
@@ -199,6 +237,20 @@ export default function ArticleDetailPage() {
               </>
             )}
           </div>
+
+          {/* Category tags */}
+          {article.categories?.length > 0 && (
+            <div style={{ display: "flex", gap: 6, marginBottom: 16, flexWrap: "wrap" }}>
+              {article.categories.map(cat => (
+                <span key={cat} style={{
+                  fontFamily: f.sans, fontSize: 10, fontWeight: 500,
+                  color: theme.accent, letterSpacing: 0.3,
+                  padding: "3px 8px", background: theme.accentSoft,
+                  borderRadius: 2, textTransform: "lowercase",
+                }}>{cat}</span>
+              ))}
+            </div>
+          )}
 
           {/* ─── Title ─── */}
           <h1 style={{
@@ -241,7 +293,7 @@ export default function ArticleDetailPage() {
         {article.image && (
           <div style={{
             width: "100%", aspectRatio: "16 / 9", maxHeight: 400, overflow: "hidden",
-            background: theme.surface, marginBottom: 32,
+            background: theme.surface, marginBottom: 32, borderRadius: 3,
           }}>
             <img src={article.image} alt={article.title}
               style={{
@@ -264,7 +316,7 @@ export default function ArticleDetailPage() {
                 {t.loadingArticle} {hostname}...
               </span>
             </div>
-            <ContentSkeleton />
+            <ContentSkeleton theme={theme} />
           </div>
         ) : fullContent ? (
           <div
@@ -276,7 +328,6 @@ export default function ArticleDetailPage() {
             }}
           />
         ) : (
-          /* Fallback to RSS description if full content unavailable */
           article.description && (
             <div>
               {contentError && (
@@ -365,6 +416,15 @@ export default function ArticleDetailPage() {
           </section>
         )}
 
+        {/* ─── Keyboard hint ─── */}
+        <div style={{
+          textAlign: "center", padding: "24px 0 8px",
+          fontFamily: f.sans, fontSize: 10, color: theme.rule,
+        }}>
+          <kbd style={{ padding: "1px 4px", background: theme.surface, borderRadius: 2, fontSize: 9 }}>Esc</kbd>
+          {" back to feed"}
+        </div>
+
         {/* ─── Footer ─── */}
         <footer style={{ borderTop: `1px solid ${theme.ink}`, padding: "16px 0", marginTop: 48 }}>
           <div style={{
@@ -421,6 +481,7 @@ export default function ArticleDetailPage() {
           display: block;
           margin: 1.5em 0;
           filter: saturate(0.7) contrast(1.05);
+          border-radius: 3px;
         }
         .article-content blockquote {
           border-left: 3px solid ${theme.accent};

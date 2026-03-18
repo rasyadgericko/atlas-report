@@ -179,7 +179,7 @@ const PROXIES = [
 ];
 
 async function fetchViaProxy(feedUrl, idx) {
-  const res = await fetch(PROXIES[idx](feedUrl), { signal: AbortSignal.timeout(12000) });
+  const res = await fetch(PROXIES[idx](feedUrl), { signal: AbortSignal.timeout(8000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   let text = await res.text();
   if (idx === 2) {
@@ -203,31 +203,69 @@ async function fetchHtmlViaProxy(url) {
   return result;
 }
 
+// ─── Feed cache (show stale data instantly, refresh in background) ───
+const FEED_CACHE_KEY = "atlas_feed_cache";
+const FEED_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCachedFeed(feedUrl) {
+  try {
+    const cache = JSON.parse(sessionStorage.getItem(FEED_CACHE_KEY) || "{}");
+    const entry = cache[feedUrl];
+    if (entry && Date.now() - entry.ts < FEED_CACHE_TTL) return entry.data;
+  } catch { /* ignore */ }
+  return null;
+}
+
+function setCachedFeed(feedUrl, data) {
+  try {
+    const cache = JSON.parse(sessionStorage.getItem(FEED_CACHE_KEY) || "{}");
+    cache[feedUrl] = { data, ts: Date.now() };
+    sessionStorage.setItem(FEED_CACHE_KEY, JSON.stringify(cache));
+  } catch { /* quota exceeded */ }
+}
+
+function parseRSSItems(xmlText, feedName) {
+  if (xmlText.trim().startsWith("<!DOCTYPE") || xmlText.trim().startsWith("<html")) throw new Error("HTML response");
+  const xml = new DOMParser().parseFromString(xmlText, "text/xml");
+  if (xml.querySelector("parsererror")) throw new Error("XML parse error");
+  return Array.from(xml.querySelectorAll("item")).map((item) => {
+    const title = item.querySelector("title")?.textContent?.trim() || "";
+    const link = item.querySelector("link")?.textContent?.trim() || item.querySelector("link")?.getAttribute("href") || "#";
+    const categories = Array.from(item.querySelectorAll("category"))
+      .map(c => c.textContent?.trim())
+      .filter(Boolean)
+      .slice(0, 3);
+
+    return {
+      title,
+      description: stripHtml(item.querySelector("description")?.textContent || "").trim().slice(0, 300),
+      link,
+      pubDate: item.querySelector("pubDate")?.textContent || item.querySelector("date")?.textContent || "",
+      image: extractImageFromItem(item),
+      source: feedName,
+      categories,
+      id: generateArticleId(title, link),
+    };
+  }).filter(a => a.title);
+}
+
 export async function fetchRSSFeed(feedUrl, feedName) {
-  for (let i = 0; i < PROXIES.length; i++) {
-    try {
-      const xmlText = await fetchViaProxy(feedUrl, i);
-      if (xmlText.trim().startsWith("<!DOCTYPE") || xmlText.trim().startsWith("<html")) throw new Error("HTML response");
-      const xml = new DOMParser().parseFromString(xmlText, "text/xml");
-      if (xml.querySelector("parsererror")) throw new Error("XML parse error");
-      return Array.from(xml.querySelectorAll("item")).map((item) => {
-        const title = item.querySelector("title")?.textContent?.trim() || "";
-        const link = item.querySelector("link")?.textContent?.trim() || item.querySelector("link")?.getAttribute("href") || "#";
-        return {
-          title,
-          description: stripHtml(item.querySelector("description")?.textContent || "").trim().slice(0, 300),
-          link,
-          pubDate: item.querySelector("pubDate")?.textContent || item.querySelector("date")?.textContent || "",
-          image: extractImageFromItem(item),
-          source: feedName,
-          id: generateArticleId(title, link),
-        };
-      }).filter(a => a.title);
-    } catch {
-      // proxy failed, try next
-    }
+  // Return cached feed instantly if available
+  const cached = getCachedFeed(feedUrl);
+  if (cached) return cached;
+
+  // Race all proxies in parallel — first valid response wins
+  try {
+    const result = await Promise.any(
+      PROXIES.map((_, i) =>
+        fetchViaProxy(feedUrl, i).then(xmlText => parseRSSItems(xmlText, feedName))
+      )
+    );
+    setCachedFeed(feedUrl, result);
+    return result;
+  } catch {
+    return [];
   }
-  return [];
 }
 
 export async function fetchAllFeeds(feedList) {
@@ -326,6 +364,10 @@ export async function fetchArticleContent(url) {
   const base = doc.createElement("base");
   base.href = url;
   doc.head.prepend(base);
+
+  // Strip navigation, header, footer, sidebar elements before Readability
+  const junkSelectors = "nav, header, footer, aside, [role='navigation'], [role='banner'], [role='complementary'], .nav, .navigation, .menu, .sidebar, .skip-links, .social-share, .share-buttons, .related-articles, .ad, .advertisement, [class*='cookie'], [class*='popup'], [id*='nav'], [id*='menu']";
+  doc.querySelectorAll(junkSelectors).forEach(el => el.remove());
 
   const reader = new Readability(doc, { charThreshold: 100 });
   const parsed = reader.parse();

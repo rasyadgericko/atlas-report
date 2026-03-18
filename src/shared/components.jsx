@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { f } from "./theme";
 
 // ─── Select Component ───
-export function Select({ value, onChange, options, renderOption, label, width = 180, theme }) {
+export function Select({ value, onChange, options, renderOption, label, theme }) {
   const [open, setOpen] = useState(false);
   const [focusIdx, setFocusIdx] = useState(-1);
   const ref = useRef(null);
@@ -79,7 +79,8 @@ export function Select({ value, onChange, options, renderOption, label, width = 
           display: "flex", alignItems: "center", gap: 6, padding: "7px 12px",
           background: "transparent", border: `1px solid ${open ? theme.ink : theme.border}`,
           cursor: "pointer", fontFamily: f.sans, fontSize: 13, fontWeight: 500,
-          color: theme.text, minWidth: width, transition: "border-color 0.15s ease-out",
+          color: theme.text, minWidth: 140, transition: "border-color 0.15s ease-out",
+          whiteSpace: "nowrap",
         }}>
         {renderOption ? renderOption(selected) : selected?.name || label}
         <ChevronDown size={12} color={theme.dim} style={{ marginLeft: "auto",

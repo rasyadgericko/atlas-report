@@ -1,29 +1,45 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { Search, Clock, ExternalLink, X, RefreshCw, Globe, Languages } from "lucide-react";
-import { theme, f, languages, uiStrings, countries, geoCountryMap } from "./shared/theme";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Search, Clock, ExternalLink, X, RefreshCw, Globe, Languages, Sun, Moon } from "lucide-react";
+import { f, languages, uiStrings, countries, geoCountryMap } from "./shared/theme";
 import { fetchAllFeeds, formatTime, cacheArticles, translateBatch } from "./shared/utils";
 import { Select, SkeletonRows } from "./shared/components";
+import { useTheme } from "./shared/ThemeContext";
+
+// ─── Debounce Hook ───
+function useDebounce(value, delay) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
 
 // ─── Article Row ───
-function ArticleRow({ article, rank, t, translated }) {
+function ArticleRow({ article, rank, t, translated, theme, focused }) {
   const displayTitle = translated?.title || article.title;
   const displayDesc = translated?.description || article.description;
   const isTranslated = !!translated?.title;
 
   return (
     <Link to={`/article/${article.id}`} state={{ article }} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
-      <article style={{
-        display: "flex", gap: 14, padding: "20px 0",
-        borderBottom: `1px solid ${theme.border}`,
-        transition: "opacity 0.15s ease-out",
-      }}
-        onMouseEnter={e => e.currentTarget.style.opacity = "0.7"}
-        onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
+      <article
+        data-article-rank={rank}
+        style={{
+          display: "flex", gap: 14, padding: "20px 0",
+          borderBottom: `1px solid ${theme.border}`,
+          transition: "opacity 0.15s ease-out, background 0.15s ease-out",
+          background: focused ? theme.surface : "transparent",
+          marginLeft: -12, marginRight: -12, paddingLeft: 12, paddingRight: 12,
+          borderRadius: focused ? 4 : 0,
+        }}
+        onMouseEnter={e => { if (!focused) e.currentTarget.style.opacity = "0.7"; }}
+        onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
 
-        <div style={{ width: 26, flexShrink: 0, paddingTop: 4, textAlign: "right" }}>
+        <div style={{ width: 30, flexShrink: 0, paddingTop: 4, textAlign: "right" }}>
           <span style={{
-            fontFamily: f.display, fontSize: 26, lineHeight: 1,
+            fontFamily: f.display, fontSize: rank >= 10 ? 20 : 26, lineHeight: 1,
             color: rank <= 3 ? theme.accent : theme.rule,
           }}>{rank}</span>
         </div>
@@ -40,7 +56,7 @@ function ArticleRow({ article, rank, t, translated }) {
               WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
             }}>{displayDesc}</p>
           )}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
             <span style={{
               fontFamily: f.sans, fontSize: 10, fontWeight: 600, color: theme.dim,
               textTransform: "uppercase", letterSpacing: 1.2,
@@ -85,14 +101,28 @@ function ArticleRow({ article, rank, t, translated }) {
               {t.readMore} <ExternalLink size={9} strokeWidth={1.5} />
             </span>
           </div>
+          {article.categories?.length > 0 && (
+            <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
+              {article.categories.map(cat => (
+                <span key={cat} style={{
+                  fontFamily: f.sans, fontSize: 9, fontWeight: 500,
+                  color: theme.accent, letterSpacing: 0.3,
+                  padding: "2px 6px", background: theme.accentSoft,
+                  borderRadius: 2, textTransform: "lowercase",
+                }}>{cat}</span>
+              ))}
+            </div>
+          )}
         </div>
 
         {article.image && (
           <div style={{
-            width: 88, height: 88, flexShrink: 0, overflow: "hidden",
+            width: 120, height: 88, flexShrink: 0, overflow: "hidden",
             background: theme.surface, filter: "saturate(0.7) contrast(1.05)",
+            borderRadius: 3,
           }}>
             <img src={article.image} alt={article.title}
+              loading="lazy"
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
               onError={e => { e.target.parentElement.style.display = "none"; }} />
           </div>
@@ -104,6 +134,8 @@ function ArticleRow({ article, rank, t, translated }) {
 
 // ─── Main ───
 export default function AtlasReport() {
+  const { theme, isDark, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCountry = searchParams.get("country") || "ALL";
   const initialLang = searchParams.get("lang") || "en";
@@ -116,16 +148,50 @@ export default function AtlasReport() {
   const [feedSources, setFeedSources] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [geoDetected, setGeoDetected] = useState(false);
-  const [translations, setTranslations] = useState({}); // { [articleId]: { title, description } }
+  const [translations, setTranslations] = useState({});
   const [translating, setTranslating] = useState(false);
+  const [focusedIdx, setFocusedIdx] = useState(-1);
+  const [headerCollapsed, setHeaderCollapsed] = useState(false);
   const translationRef = useRef({ lang: "en", ids: "" });
+  const searchInputRef = useRef(null);
 
   const t = { ...uiStrings.en, ...(uiStrings[selectedLanguage] || {}) };
+
+  // Debounced search
+  const debouncedSearch = useDebounce(searchQuery, 200);
+
+  // ─── Collapsing header on scroll ───
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let accumulated = 0;
+    const THRESHOLD = 40; // px of consistent scroll direction before toggling
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+      lastY = y;
+
+      // Near top: always show full header
+      if (y < 100) { accumulated = 0; setHeaderCollapsed(false); return; }
+
+      // Accumulate scroll in one direction; reset if direction changes
+      if ((accumulated > 0 && delta < 0) || (accumulated < 0 && delta > 0)) {
+        accumulated = delta;
+      } else {
+        accumulated += delta;
+      }
+
+      if (accumulated > THRESHOLD) setHeaderCollapsed(true);
+      else if (accumulated < -THRESHOLD) setHeaderCollapsed(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Translate visible articles when language changes
   useEffect(() => {
     if (selectedLanguage === "en" || loading || !articles.length) {
-      setTranslations({});
+      setTranslations({}); // eslint-disable-line react-hooks/set-state-in-effect
       return;
     }
 
@@ -150,7 +216,6 @@ export default function AtlasReport() {
       visible.forEach((a, i) => {
         map[a.id] = { title: trTitles[i], description: trDescs[i] };
       });
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTranslations(prev => ({ ...prev, ...map }));
       setTranslating(false);
     })();
@@ -158,7 +223,7 @@ export default function AtlasReport() {
     return () => { cancelled = true; };
   }, [selectedLanguage, articles, visibleCount, loading]);
 
-  // Auto-detect country on first load (only if no URL preference)
+  // Auto-detect country on first load
   useEffect(() => {
     if (searchParams.get("country") || geoDetected) return;
     (async () => {
@@ -174,7 +239,7 @@ export default function AtlasReport() {
     })();
   }, [searchParams, geoDetected]);
 
-  // Sync URL search params when preferences change
+  // Sync URL search params
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedCountry !== "ALL") params.set("country", selectedCountry);
@@ -186,6 +251,7 @@ export default function AtlasReport() {
     const code = countryCode || selectedCountry;
     setLoading(true);
     setVisibleCount(10);
+    setFocusedIdx(-1);
     const country = countries.find(ct => ct.code === code);
     if (!country) return;
     setFeedSources(country.feeds.map(fd => fd.name));
@@ -198,46 +264,131 @@ export default function AtlasReport() {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchNews(); }, [fetchNews]);
 
-  const filteredArticles = searchQuery
-    ? articles.filter(a => {
-        const q = searchQuery.toLowerCase();
-        return a.title.toLowerCase().includes(q) || a.description?.toLowerCase().includes(q) || a.source.toLowerCase().includes(q);
-      })
-    : articles;
+  const filteredArticles = useMemo(() => {
+    if (!debouncedSearch) return articles;
+    const q = debouncedSearch.toLowerCase();
+    return articles.filter(a =>
+      a.title.toLowerCase().includes(q) ||
+      a.description?.toLowerCase().includes(q) ||
+      a.source.toLowerCase().includes(q) ||
+      a.categories?.some(c => c.toLowerCase().includes(q))
+    );
+  }, [articles, debouncedSearch]);
+
+  // ─── Keyboard shortcuts ───
+  useEffect(() => {
+    const onKey = (e) => {
+      // Don't capture when typing in input
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+        if (e.key === "Escape") {
+          e.target.blur();
+          setFocusedIdx(-1);
+        }
+        return;
+      }
+
+      const max = Math.min(visibleCount, filteredArticles.length) - 1;
+
+      switch (e.key) {
+        case "j":
+          e.preventDefault();
+          setFocusedIdx(prev => {
+            const next = Math.min(prev + 1, max);
+            // Scroll focused article into view
+            setTimeout(() => {
+              const el = document.querySelector(`[data-article-rank="${next + 1}"]`);
+              el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            }, 10);
+            return next;
+          });
+          break;
+        case "k":
+          e.preventDefault();
+          setFocusedIdx(prev => {
+            const next = Math.max(prev - 1, 0);
+            setTimeout(() => {
+              const el = document.querySelector(`[data-article-rank="${next + 1}"]`);
+              el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            }, 10);
+            return next;
+          });
+          break;
+        case "Enter":
+          if (focusedIdx >= 0 && focusedIdx <= max) {
+            e.preventDefault();
+            const article = filteredArticles[focusedIdx];
+            navigate(`/article/${article.id}`, { state: { article } });
+          }
+          break;
+        case "/":
+          e.preventDefault();
+          searchInputRef.current?.focus();
+          break;
+        case "Escape":
+          setFocusedIdx(-1);
+          break;
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [filteredArticles, visibleCount, focusedIdx, navigate]);
 
   const countryData = countries.find(ct => ct.code === selectedCountry);
 
   return (
-    <div style={{ background: theme.bg, minHeight: "100vh", fontFamily: f.body }}>
+    <div style={{ background: theme.bg, minHeight: "100vh", fontFamily: f.body, transition: "background 0.3s ease" }}>
 
       {/* ─── Masthead ─── */}
       <header style={{
         background: theme.bg, position: "sticky", top: 0, zIndex: 50,
         borderBottom: `1px solid ${theme.ink}`,
+        transition: "all 0.25s ease-out",
       }}>
         <div style={{
-          maxWidth: 720, margin: "0 auto", padding: "24px 24px 12px",
-          display: "flex", alignItems: "flex-end", justifyContent: "space-between",
+          maxWidth: 720, margin: "0 auto",
+          padding: headerCollapsed ? "10px 24px" : "20px 24px 14px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          gap: 12, flexWrap: "wrap",
+          transition: "padding 0.25s ease-out",
         }}>
-          <div>
-            <h1 style={{
-              fontFamily: f.display, fontSize: 32, fontWeight: 400,
-              color: theme.ink, lineHeight: 1, letterSpacing: -0.5,
-              display: "flex", alignItems: "center", gap: 10,
-            }}>
-              <Globe size={24} strokeWidth={1.3} color={theme.ink} />
-              The Atlas Report
-            </h1>
-            <p style={{
-              fontFamily: f.sans, fontSize: 10, fontWeight: 500,
-              color: theme.dim, letterSpacing: 2, textTransform: "uppercase", marginTop: 4,
-              paddingLeft: 34,
-            }}>Worldwide news, one report at a time</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+            <Globe size={headerCollapsed ? 18 : 24} strokeWidth={1.3} color={theme.ink}
+              style={{ flexShrink: 0, transition: "all 0.25s ease-out" }} />
+            <div style={{ minWidth: 0 }}>
+              <h1 style={{
+                fontFamily: f.display,
+                fontSize: headerCollapsed ? 20 : 32,
+                fontWeight: 400,
+                color: theme.ink, lineHeight: 1, letterSpacing: -0.5,
+                transition: "font-size 0.25s ease-out",
+                whiteSpace: "nowrap",
+              }}>
+                The Atlas Report
+              </h1>
+              {!headerCollapsed && (
+                <p style={{
+                  fontFamily: f.sans, fontSize: 10, fontWeight: 500,
+                  color: theme.dim, letterSpacing: 2, textTransform: "uppercase", marginTop: 6,
+                }}>Worldwide news, one report at a time</p>
+              )}
+            </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, paddingBottom: 2 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            {/* Day/Night toggle */}
+            <button onClick={toggleTheme} aria-label={isDark ? t.dayEdition : t.nightEdition} style={{
+              display: "flex", alignItems: "center", gap: 4, padding: "4px 8px",
+              border: `1px solid ${theme.border}`, background: "transparent",
+              cursor: "pointer", fontFamily: f.sans, fontSize: 10,
+              fontWeight: 500, color: theme.dim, transition: "all 0.15s ease-out",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = theme.ink; e.currentTarget.style.color = theme.ink; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.dim; }}>
+              {isDark ? <Sun size={10} strokeWidth={1.5} /> : <Moon size={10} strokeWidth={1.5} />}
+              <span className="header-btn-label">{isDark ? t.dayEdition : t.nightEdition}</span>
+            </button>
             <div style={{
               display: "flex", alignItems: "center", gap: 4,
-              padding: "3px 8px", border: `1px solid ${theme.accent}`,
+              padding: "4px 8px", border: `1px solid ${theme.accent}`,
             }}>
               <div style={{
                 width: 5, height: 5, borderRadius: "50%",
@@ -248,15 +399,15 @@ export default function AtlasReport() {
                 color: theme.accent, letterSpacing: 1.5,
               }}>{t.liveLabel}</span>
             </div>
-            <button onClick={fetchNews} aria-label={t.refresh} style={{
-              display: "flex", alignItems: "center", gap: 4, padding: "3px 8px",
+            <button onClick={() => fetchNews()} aria-label={t.refresh} style={{
+              display: "flex", alignItems: "center", gap: 4, padding: "4px 8px",
               border: `1px solid ${theme.border}`, background: "transparent",
               cursor: "pointer", fontFamily: f.sans, fontSize: 10,
               fontWeight: 500, color: theme.dim, transition: "all 0.15s ease-out",
             }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = theme.ink; e.currentTarget.style.color = theme.ink; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.dim; }}>
-              <RefreshCw size={10} strokeWidth={1.5} /> {t.refresh}
+              <RefreshCw size={10} strokeWidth={1.5} /> <span className="header-btn-label">{t.refresh}</span>
             </button>
           </div>
         </div>
@@ -265,14 +416,13 @@ export default function AtlasReport() {
       {/* ─── Toolbar ─── */}
       <nav style={{
         background: theme.bg, borderBottom: `1px solid ${theme.border}`,
-        position: "sticky", top: 84, zIndex: 40,
       }}>
         <div style={{
           maxWidth: 720, margin: "0 auto", padding: "10px 24px",
           display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
         }}>
-          <Select value={selectedCountry} onChange={setSelectedCountry}
-            options={countries} label={t.selectCountry} width={190} theme={theme}
+          <Select value={selectedCountry} onChange={v => { setSelectedCountry(v); setFocusedIdx(-1); }}
+            options={countries} label={t.selectCountry} theme={theme}
             renderOption={(o) => (
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ fontSize: 14 }}>{o?.flag}</span>
@@ -281,18 +431,18 @@ export default function AtlasReport() {
             )} />
           <Select value={selectedLanguage} onChange={setSelectedLanguage}
             options={languages.map(l => ({ ...l, id: l.code }))}
-            label={t.language} width={160} theme={theme}
+            label={t.language} theme={theme}
             renderOption={(o) => (
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span>{o?.native}</span>
                 {o?.name !== o?.native && <span style={{ color: theme.dim, fontSize: 11 }}>({o?.name})</span>}
               </span>
             )} />
-          <div style={{ flex: 1, position: "relative", minWidth: 120 }}>
+          <div style={{ flex: 1, position: "relative", minWidth: 100 }}>
             <Search size={13} strokeWidth={1.5} color={theme.dim}
               style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
-            <input type="text" placeholder={t.search} value={searchQuery}
-              onChange={e => { setSearchQuery(e.target.value); setVisibleCount(10); }}
+            <input ref={searchInputRef} type="text" placeholder={`${t.search} ( / )`} value={searchQuery}
+              onChange={e => { setSearchQuery(e.target.value); setVisibleCount(10); setFocusedIdx(-1); }}
               aria-label={t.search}
               style={{
                 width: "100%", padding: "7px 28px 7px 30px",
@@ -303,7 +453,7 @@ export default function AtlasReport() {
               onFocus={e => e.target.style.borderColor = theme.ink}
               onBlur={e => e.target.style.borderColor = theme.border} />
             {searchQuery && (
-              <button onClick={() => setSearchQuery("")} aria-label={t.close} style={{
+              <button onClick={() => { setSearchQuery(""); setFocusedIdx(-1); }} aria-label={t.close} style={{
                 position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)",
                 background: "none", border: "none", cursor: "pointer", padding: 4,
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -384,6 +534,7 @@ export default function AtlasReport() {
           <div>
             {filteredArticles.slice(0, visibleCount).map((article, i) => (
               <ArticleRow key={article.id} article={article} rank={i + 1} t={t}
+                theme={theme} focused={i === focusedIdx}
                 translated={selectedLanguage !== "en" ? translations[article.id] : null} />
             ))}
 
@@ -418,6 +569,23 @@ export default function AtlasReport() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Keyboard shortcuts hint */}
+        {!loading && filteredArticles.length > 0 && (
+          <div style={{
+            textAlign: "center", padding: "8px 0 24px",
+            fontFamily: f.sans, fontSize: 10, color: theme.rule,
+          }}>
+            <kbd style={{ padding: "1px 4px", background: theme.surface, borderRadius: 2, fontSize: 9 }}>j</kbd>
+            {" / "}
+            <kbd style={{ padding: "1px 4px", background: theme.surface, borderRadius: 2, fontSize: 9 }}>k</kbd>
+            {" navigate · "}
+            <kbd style={{ padding: "1px 4px", background: theme.surface, borderRadius: 2, fontSize: 9 }}>Enter</kbd>
+            {" open · "}
+            <kbd style={{ padding: "1px 4px", background: theme.surface, borderRadius: 2, fontSize: 9 }}>/</kbd>
+            {" search"}
           </div>
         )}
       </main>

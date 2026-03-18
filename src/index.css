@@ -12,6 +12,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #F7F5F2;
   color: #2A2A2A;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -74,4 +75,74 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ─── Responsive: Mobile ─── */
+@media (max-width: 600px) {
+  /* Give header breathing room on mobile */
+  header > div {
+    padding: 16px 16px 12px !important;
+    gap: 8px !important;
+  }
+
+  /* Smaller header title on mobile */
+  header h1 {
+    font-size: 22px !important;
+  }
+
+  /* Hide button text labels on small screens, keep icons */
+  .header-btn-label {
+    display: none !important;
+  }
+
+  /* Stack toolbar items vertically on narrow screens */
+  nav > div {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 10px 16px !important;
+  }
+
+  /* Make selects full-width on mobile */
+  nav > div > div:has(button[aria-haspopup]) {
+    width: 100%;
+  }
+  nav > div > div:has(button[aria-haspopup]) button {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  /* Content padding on mobile */
+  main,
+  .article-page-container {
+    padding: 0 16px !important;
+  }
+
+  /* Reduce article image size on mobile */
+  article > div:last-child {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  /* Article content needs breathing room on mobile */
+  .article-content {
+    font-size: 16px !important;
+    line-height: 1.75 !important;
+  }
+
+  .article-content h2 { font-size: 22px !important; }
+  .article-content h3 { font-size: 19px !important; }
+  .article-content h4 { font-size: 17px !important; }
+
+  /* CTA button needs mobile padding */
+  .article-page-container a[href][target="_blank"] {
+    font-size: 13px !important;
+    padding: 14px 16px !important;
+  }
+}
+
+/* ─── Keyboard shortcut hints ─── */
+kbd {
+  font-family: 'General Sans', -apple-system, sans-serif;
+  border: 1px solid currentColor;
+  opacity: 0.5;
 }
