@@ -140,6 +140,11 @@ body {
   }
 }
 
+/* ─── Article row hover ─── */
+.article-row:hover {
+  opacity: 0.7;
+}
+
 /* ─── Keyboard shortcut hints ─── */
 kbd {
   font-family: 'General Sans', -apple-system, sans-serif;

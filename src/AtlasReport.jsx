@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Search, Clock, ExternalLink, X, RefreshCw, Globe, Languages, Sun, Moon } from "lucide-react";
 import { f, languages, uiStrings, countries, geoCountryMap } from "./shared/theme";
-import { fetchAllFeeds, formatTime, cacheArticles, translateBatch } from "./shared/utils";
+import { fetchAllFeeds, formatTime, cacheArticles, translateBatch, getCachedAllFeeds } from "./shared/utils";
 import { Select, SkeletonRows } from "./shared/components";
 import { useTheme } from "./shared/ThemeContext";
 
@@ -26,6 +26,7 @@ function ArticleRow({ article, rank, t, translated, theme, focused }) {
     <Link to={`/article/${article.id}`} state={{ article }} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
       <article
         data-article-rank={rank}
+        className="article-row"
         style={{
           display: "flex", gap: 14, padding: "20px 0",
           borderBottom: `1px solid ${theme.border}`,
@@ -33,9 +34,7 @@ function ArticleRow({ article, rank, t, translated, theme, focused }) {
           background: focused ? theme.surface : "transparent",
           marginLeft: -12, marginRight: -12, paddingLeft: 12, paddingRight: 12,
           borderRadius: focused ? 4 : 0,
-        }}
-        onMouseEnter={e => { if (!focused) e.currentTarget.style.opacity = "0.7"; }}
-        onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}>
+        }}>
 
         <div style={{ width: 30, flexShrink: 0, paddingTop: 4, textAlign: "right" }}>
           <span style={{
@@ -157,6 +156,9 @@ export default function AtlasReport() {
 
   const t = { ...uiStrings.en, ...(uiStrings[selectedLanguage] || {}) };
 
+  // Scroll to top on mount (back navigation)
+  useEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, []);
+
   // Debounced search
   const debouncedSearch = useDebounce(searchQuery, 200);
 
@@ -247,18 +249,34 @@ export default function AtlasReport() {
     setSearchParams(params, { replace: true });
   }, [selectedCountry, selectedLanguage, setSearchParams]);
 
-  const fetchNews = useCallback(async (countryCode) => {
+  const fetchNews = useCallback(async (countryCode, forceRefresh = false) => {
     const code = countryCode || selectedCountry;
-    setLoading(true);
     setVisibleCount(10);
     setFocusedIdx(-1);
     const country = countries.find(ct => ct.code === code);
     if (!country) return;
     setFeedSources(country.feeds.map(fd => fd.name));
-    const data = await fetchAllFeeds(country.feeds);
-    setArticles(data);
-    cacheArticles(data);
-    setLoading(false);
+
+    // Show cached data instantly (no skeleton flash)
+    const cached = !forceRefresh && getCachedAllFeeds(code);
+    if (cached && cached.length > 0) {
+      setArticles(cached);
+      cacheArticles(cached);
+      setLoading(false);
+      // Refresh in background silently
+      fetchAllFeeds(country.feeds, code).then(fresh => {
+        if (fresh.length > 0) {
+          setArticles(fresh);
+          cacheArticles(fresh);
+        }
+      });
+    } else {
+      setLoading(true);
+      const data = await fetchAllFeeds(country.feeds, code);
+      setArticles(data);
+      cacheArticles(data);
+      setLoading(false);
+    }
   }, [selectedCountry]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -399,7 +417,7 @@ export default function AtlasReport() {
                 color: theme.accent, letterSpacing: 1.5,
               }}>{t.liveLabel}</span>
             </div>
-            <button onClick={() => fetchNews()} aria-label={t.refresh} style={{
+            <button onClick={() => fetchNews(undefined, true)} aria-label={t.refresh} style={{
               display: "flex", alignItems: "center", gap: 4, padding: "4px 8px",
               border: `1px solid ${theme.border}`, background: "transparent",
               cursor: "pointer", fontFamily: f.sans, fontSize: 10,

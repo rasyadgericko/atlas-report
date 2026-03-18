@@ -173,6 +173,7 @@ export async function translateHtml(html, targetLang) {
 
 // ─── Multi-proxy fetcher ───
 const PROXIES = [
+  (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
   (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
   (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
@@ -182,7 +183,7 @@ async function fetchViaProxy(feedUrl, idx) {
   const res = await fetch(PROXIES[idx](feedUrl), { signal: AbortSignal.timeout(8000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   let text = await res.text();
-  if (idx === 2) {
+  if (idx === 3) {
     const json = JSON.parse(text);
     if (json.contents) text = json.contents;
     else throw new Error("No contents");
@@ -203,15 +204,19 @@ async function fetchHtmlViaProxy(url) {
   return result;
 }
 
-// ─── Feed cache (show stale data instantly, refresh in background) ───
+// ─── Feed cache (stale-while-revalidate) ───
 const FEED_CACHE_KEY = "atlas_feed_cache";
-const FEED_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const FEED_CACHE_FRESH = 2 * 60 * 1000; // 2 min = fresh, skip network
+const FEED_CACHE_STALE = 30 * 60 * 1000; // 30 min = stale but usable
 
 function getCachedFeed(feedUrl) {
   try {
     const cache = JSON.parse(sessionStorage.getItem(FEED_CACHE_KEY) || "{}");
     const entry = cache[feedUrl];
-    if (entry && Date.now() - entry.ts < FEED_CACHE_TTL) return entry.data;
+    if (!entry) return null;
+    const age = Date.now() - entry.ts;
+    if (age < FEED_CACHE_FRESH) return { data: entry.data, fresh: true };
+    if (age < FEED_CACHE_STALE) return { data: entry.data, fresh: false };
   } catch { /* ignore */ }
   return null;
 }
@@ -221,6 +226,26 @@ function setCachedFeed(feedUrl, data) {
     const cache = JSON.parse(sessionStorage.getItem(FEED_CACHE_KEY) || "{}");
     cache[feedUrl] = { data, ts: Date.now() };
     sessionStorage.setItem(FEED_CACHE_KEY, JSON.stringify(cache));
+  } catch { /* quota exceeded */ }
+}
+
+// Aggregated feed cache for instant back-navigation
+const ALL_FEEDS_CACHE_KEY = "atlas_all_feeds_cache";
+
+export function getCachedAllFeeds(countryCode) {
+  try {
+    const cache = JSON.parse(sessionStorage.getItem(ALL_FEEDS_CACHE_KEY) || "{}");
+    const entry = cache[countryCode];
+    if (entry && Date.now() - entry.ts < FEED_CACHE_STALE) return entry.data;
+  } catch { /* ignore */ }
+  return null;
+}
+
+function setCachedAllFeeds(countryCode, data) {
+  try {
+    const cache = JSON.parse(sessionStorage.getItem(ALL_FEEDS_CACHE_KEY) || "{}");
+    cache[countryCode] = { data, ts: Date.now() };
+    sessionStorage.setItem(ALL_FEEDS_CACHE_KEY, JSON.stringify(cache));
   } catch { /* quota exceeded */ }
 }
 
@@ -250,9 +275,9 @@ function parseRSSItems(xmlText, feedName) {
 }
 
 export async function fetchRSSFeed(feedUrl, feedName) {
-  // Return cached feed instantly if available
+  // Return fresh cached feed instantly
   const cached = getCachedFeed(feedUrl);
-  if (cached) return cached;
+  if (cached?.fresh) return cached.data;
 
   // Race all proxies in parallel — first valid response wins
   try {
@@ -264,11 +289,12 @@ export async function fetchRSSFeed(feedUrl, feedName) {
     setCachedFeed(feedUrl, result);
     return result;
   } catch {
-    return [];
+    // Fall back to stale cache if network fails
+    return cached?.data || [];
   }
 }
 
-export async function fetchAllFeeds(feedList) {
+export async function fetchAllFeeds(feedList, countryCode) {
   const results = await Promise.allSettled(feedList.map(fd => fetchRSSFeed(fd.url, fd.name)));
   const all = results.filter(r => r.status === "fulfilled").flatMap(r => r.value);
   const seen = new Set();
@@ -278,7 +304,9 @@ export async function fetchAllFeeds(feedList) {
     seen.add(key);
     return true;
   });
-  return rankArticles(deduped, all);
+  const ranked = rankArticles(deduped, all);
+  if (countryCode) setCachedAllFeeds(countryCode, ranked);
+  return ranked;
 }
 
 // ─── Trending algorithm: cross-source topic weighting ───
