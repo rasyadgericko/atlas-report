@@ -365,12 +365,12 @@ export default function AtlasReport() {
     <div style={{ background: theme.bg, minHeight: "100vh", fontFamily: f.body, transition: "background 0.3s ease" }}>
 
       {/* ─── Masthead ─── */}
-      <header style={{
+      <header className={headerCollapsed ? "header-collapsed" : ""} style={{
         background: theme.bg, position: "sticky", top: 0, zIndex: 50,
         borderBottom: `1px solid ${theme.ink}`,
         transition: "all 0.25s ease-out",
       }}>
-        <div style={{
+        <div className="header-inner" style={{
           maxWidth: 720, margin: "0 auto",
           padding: headerCollapsed ? "10px 24px" : "20px 24px 14px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -378,10 +378,10 @@ export default function AtlasReport() {
           transition: "padding 0.25s ease-out",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-            <Globe size={headerCollapsed ? 18 : 24} strokeWidth={1.3} color={theme.ink}
+            <Globe className="header-globe" size={headerCollapsed ? 18 : 24} strokeWidth={1.3} color={theme.ink}
               style={{ flexShrink: 0, transition: "all 0.25s ease-out" }} />
             <div style={{ minWidth: 0 }}>
-              <h1 style={{
+              <h1 className="header-title" style={{
                 fontFamily: f.display,
                 fontSize: headerCollapsed ? 20 : 32,
                 fontWeight: 400,
@@ -392,7 +392,7 @@ export default function AtlasReport() {
                 The Atlas Report
               </h1>
               {!headerCollapsed && (
-                <p style={{
+                <p className="header-subtitle" style={{
                   fontFamily: f.sans, fontSize: 10, fontWeight: 500,
                   color: theme.dim, letterSpacing: 2, textTransform: "uppercase", marginTop: 6,
                 }}>Worldwide news, one report at a time</p>

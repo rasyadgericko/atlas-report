@@ -102,15 +102,25 @@ body {
 
 /* ─── Responsive: Mobile ─── */
 @media (max-width: 600px) {
-  /* Give header breathing room on mobile */
-  header > div {
-    padding: 16px 16px 12px !important;
+  /* Force collapsed header on mobile — no scroll animation */
+  header .header-inner {
+    padding: 10px 16px !important;
     gap: 8px !important;
+    transition: none !important;
   }
 
-  /* Smaller header title on mobile */
-  header h1 {
-    font-size: 22px !important;
+  header .header-title {
+    font-size: 20px !important;
+    transition: none !important;
+  }
+
+  header .header-subtitle {
+    display: none !important;
+  }
+
+  header .header-globe {
+    width: 18px !important;
+    height: 18px !important;
   }
 
   /* Hide button text labels on small screens, keep icons */
