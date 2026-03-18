@@ -184,7 +184,7 @@ export default function ArticleDetailPage() {
             }}>{t.articleNotFound}</h2>
             <p style={{
               fontFamily: f.body, fontSize: 15, color: theme.dim,
-              fontStyle: "italic", marginBottom: 12, maxWidth: 400, margin: "0 auto 32px",
+              fontStyle: "normal", marginBottom: 12, maxWidth: 400, margin: "0 auto 32px",
               lineHeight: 1.6,
             }}>{t.articleExpired}</p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>

@@ -502,12 +502,12 @@ export default function AtlasReport() {
             paddingBottom: 12, borderBottom: `2px solid ${theme.ink}`,
           }}>
             <h2 style={{
-              fontFamily: f.display, fontSize: 24, fontWeight: 400,
-              color: theme.ink, letterSpacing: -0.2,
+              fontFamily: f.display, fontSize: 28, fontWeight: 400,
+              color: theme.ink, letterSpacing: -0.3,
             }}>{t.trending}</h2>
             {selectedCountry !== "ALL" && (
               <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <span style={{ fontFamily: f.body, color: theme.dim, fontStyle: "italic", fontSize: 16 }}>in</span>
+                <span style={{ fontFamily: f.body, color: theme.dim, fontStyle: "normal", fontSize: 16 }}>in</span>
                 <span style={{ fontSize: 16 }}>{countryData?.flag}</span>
                 <span style={{ fontFamily: f.display, fontSize: 20, color: theme.ink }}>{countryData?.name}</span>
               </span>
@@ -541,7 +541,7 @@ export default function AtlasReport() {
               {feedSources.map((s, i) => (
                 <span key={s} style={{
                   fontFamily: f.sans, fontSize: 10, color: theme.dim,
-                  fontWeight: 400, fontStyle: "italic",
+                  fontWeight: 400, fontStyle: "normal",
                 }}>{s}{i < feedSources.length - 1 ? "," : ""}</span>
               ))}
             </div>
@@ -554,7 +554,7 @@ export default function AtlasReport() {
         ) : filteredArticles.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
             <p style={{ fontFamily: f.display, fontSize: 20, color: theme.ink, marginBottom: 6 }}>{t.noResults}</p>
-            <p style={{ fontFamily: f.body, fontSize: 14, color: theme.dim, fontStyle: "italic" }}>{t.tryAgain}</p>
+            <p style={{ fontFamily: f.body, fontSize: 14, color: theme.dim, fontStyle: "normal" }}>{t.tryAgain}</p>
           </div>
         ) : (
           <div>
