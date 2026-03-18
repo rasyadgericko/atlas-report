@@ -115,12 +115,12 @@ function ArticleRow({ article, rank, t, translated, theme, focused }) {
         </div>
 
         {article.image && (
-          <div style={{
+          <div className="article-thumb" style={{
             width: 120, height: 88, flexShrink: 0, overflow: "hidden",
             background: theme.surface, filter: "saturate(0.7) contrast(1.05)",
             borderRadius: 3,
           }}>
-            <img src={article.image} alt={article.title}
+            <img src={article.image} alt=""
               loading="lazy"
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
               onError={e => { e.target.parentElement.style.display = "none"; }} />
@@ -230,9 +230,9 @@ export default function AtlasReport() {
     if (searchParams.get("country") || geoDetected) return;
     (async () => {
       try {
-        const res = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(4000) });
+        const res = await fetch("https://freeipapi.com/api/json/", { signal: AbortSignal.timeout(3000) });
         const data = await res.json();
-        const code = data.country_code;
+        const code = data.countryCode;
         if (code && geoCountryMap[code]) {
           setSelectedCountry(geoCountryMap[code]);
         }
@@ -241,12 +241,13 @@ export default function AtlasReport() {
     })();
   }, [searchParams, geoDetected]);
 
-  // Sync URL search params
+  // Sync URL search params and html lang
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedCountry !== "ALL") params.set("country", selectedCountry);
     if (selectedLanguage !== "en") params.set("lang", selectedLanguage);
     setSearchParams(params, { replace: true });
+    document.documentElement.lang = selectedLanguage;
   }, [selectedCountry, selectedLanguage, setSearchParams]);
 
   const fetchNews = useCallback(async (countryCode, forceRefresh = false) => {
@@ -505,7 +506,7 @@ export default function AtlasReport() {
               </span>
             )}
             {!loading && (
-              <span style={{
+              <span aria-live="polite" style={{
                 fontFamily: f.sans, fontSize: 11, color: theme.dim,
                 marginLeft: "auto", fontWeight: 500,
                 display: "inline-flex", alignItems: "center", gap: 6,

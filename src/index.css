@@ -164,8 +164,8 @@ body {
     padding: 0 16px !important;
   }
 
-  /* Reduce article image size on mobile */
-  article > div:last-child {
+  /* Reduce article thumbnail on mobile */
+  .article-thumb {
     width: 72px !important;
     height: 72px !important;
   }

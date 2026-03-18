@@ -295,7 +295,7 @@ export default function ArticleDetailPage() {
             width: "100%", aspectRatio: "16 / 9", maxHeight: 400, overflow: "hidden",
             background: theme.surface, marginBottom: 32, borderRadius: 3,
           }}>
-            <img src={article.image} alt={article.title}
+            <img src={article.image} alt=""
               style={{
                 width: "100%", height: "100%", objectFit: "cover", display: "block",
                 filter: "saturate(0.7) contrast(1.05)",

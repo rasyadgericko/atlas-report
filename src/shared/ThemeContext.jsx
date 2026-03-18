@@ -76,6 +76,14 @@ export function ThemeProvider({ children }) {
 
   const theme = isDark ? darkTheme : lightTheme;
 
+  // Sync body background and meta theme-color for smooth transitions
+  useEffect(() => {
+    document.body.style.background = theme.bg;
+    document.body.style.color = theme.text;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", theme.bg);
+  }, [theme]);
+
   return (
     <ThemeContext.Provider value={{ theme, isDark, toggleTheme }}>
       {children}
