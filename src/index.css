@@ -1,0 +1,77 @@
+@import url('https://api.fontshare.com/v2/css?f[]=gambarino@400&f[]=sentient@400,600,700,400i&f[]=general-sans@400,500,600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Sentient', 'Georgia', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #F7F5F2;
+  color: #2A2A2A;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: #2A2A2A;
+  color: #F7F5F2;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #C8C2B8;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9E9788;
+}
+
+/* ─── Focus-visible for keyboard navigation ─── */
+:focus-visible {
+  outline: 2px solid #7A2E2E;
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ─── Shared keyframes ─── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.5; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
