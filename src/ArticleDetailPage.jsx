@@ -178,10 +178,10 @@ export default function ArticleDetailPage() {
           <SlimHeader t={t} theme={theme} />
           <div style={{ textAlign: "center", padding: "100px 0" }}>
             <Globe size={48} strokeWidth={0.8} color={theme.rule} style={{ marginBottom: 24 }} />
-            <h2 style={{
+            <h1 style={{
               fontFamily: f.display, fontSize: 28, fontWeight: 400,
               color: theme.ink, marginBottom: 12,
-            }}>{t.articleNotFound}</h2>
+            }}>{t.articleNotFound}</h1>
             <p style={{
               fontFamily: f.body, fontSize: 15, color: theme.dim,
               fontStyle: "normal", marginBottom: 12, maxWidth: 400, margin: "0 auto 32px",
@@ -378,10 +378,10 @@ export default function ArticleDetailPage() {
             <div style={{
               borderTop: `1px solid ${theme.rule}`, paddingTop: 24, marginBottom: 16,
             }}>
-              <h3 style={{
+              <h2 style={{
                 fontFamily: f.sans, fontSize: 11, fontWeight: 600, color: theme.dim,
                 textTransform: "uppercase", letterSpacing: 1.5,
-              }}>{t.moreFrom} {article.source}</h3>
+              }}>{t.moreFrom} {article.source}</h2>
             </div>
 
             {relatedArticles.map(related => (
@@ -398,10 +398,10 @@ export default function ArticleDetailPage() {
                 }}
                   onMouseEnter={e => e.currentTarget.style.opacity = "0.7"}
                   onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
-                  <h4 style={{
+                  <h3 style={{
                     fontFamily: f.display, fontSize: 16, fontWeight: 400,
                     color: theme.ink, lineHeight: 1.35, marginBottom: 4,
-                  }}>{related.title}</h4>
+                  }}>{related.title}</h3>
                   {related.pubDate && (
                     <span style={{
                       fontFamily: f.sans, fontSize: 10, color: theme.dim,
@@ -451,7 +451,6 @@ export default function ArticleDetailPage() {
         .article-content p {
           margin-bottom: 1.4em;
         }
-        .article-content h1,
         .article-content h2,
         .article-content h3,
         .article-content h4 {

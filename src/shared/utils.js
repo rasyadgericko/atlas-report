@@ -407,7 +407,7 @@ export async function fetchArticleContent(url) {
   const result = {
     title: parsed.title || "",
     content: DOMPurify.sanitize(parsed.content, {
-      ALLOWED_TAGS: ["p", "h1", "h2", "h3", "h4", "h5", "h6", "br", "strong", "em", "b", "i", "u", "a", "ul", "ol", "li", "blockquote", "figure", "figcaption", "img", "span", "div", "table", "thead", "tbody", "tr", "th", "td", "pre", "code", "sub", "sup"],
+      ALLOWED_TAGS: ["p", "h2", "h3", "h4", "h5", "h6", "br", "strong", "em", "b", "i", "u", "a", "ul", "ol", "li", "blockquote", "figure", "figcaption", "img", "span", "div", "table", "thead", "tbody", "tr", "th", "td", "pre", "code", "sub", "sup"],
       ALLOWED_ATTR: ["href", "src", "alt", "title", "target", "rel", "class"],
       ADD_ATTR: ["target"],
     }),
