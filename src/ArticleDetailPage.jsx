@@ -545,7 +545,7 @@ export default function ArticleDetailPage() {
         </div>
 
         {/* ─── Footer ─── */}
-        <footer style={{ borderTop: `1px solid ${theme.border}`, padding: "16px 0", marginTop: 48 }}>
+        <footer style={{ borderTop: `1px solid ${theme.border}`, padding: "16px 0", marginTop: 48, marginLeft: -24, marginRight: -24, paddingLeft: 24, paddingRight: 24 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontFamily: f.display, fontSize: 15, color: theme.ink, display: "flex", alignItems: "center", gap: 6 }}>
               <Globe size={14} strokeWidth={1.3} color={theme.ink} />

@@ -147,7 +147,7 @@ export default function GlobeMapPage() {
       {/* ─── Navbar ─── */}
       <header style={{
         background: theme.bg,
-        borderBottom: `1px solid ${theme.ink}`,
+        borderBottom: `1px solid ${theme.border}`,
         flexShrink: 0,
       }}>
         <div style={{
