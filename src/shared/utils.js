@@ -1,3 +1,25 @@
+// ─── Reading time ───
+export function estimateReadingTime(text) {
+  if (!text) return 1;
+  const words = text.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+// ─── Articles-read-today counter ───
+function todayKey() {
+  return `atlas-read-${new Date().toISOString().slice(0, 10)}`;
+}
+export function trackArticleRead() {
+  try {
+    const n = parseInt(localStorage.getItem(todayKey()) || "0", 10);
+    localStorage.setItem(todayKey(), String(n + 1));
+  } catch { /* quota */ }
+}
+export function getArticlesReadToday() {
+  try { return parseInt(localStorage.getItem(todayKey()) || "0", 10); }
+  catch { return 0; }
+}
+
 // ─── Stable Article ID ───
 export function generateArticleId(title, link) {
   const str = `${title}|${link}`;

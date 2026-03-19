@@ -91,6 +91,28 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Page route transition */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* Intro screen element stagger */
+@keyframes introFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes introFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Header element entrance on first load */
+@keyframes headerItemIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
 /* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -170,6 +192,23 @@ body {
   .article-page-container a[href][target="_blank"] {
     font-size: 13px !important;
     padding: 14px 16px !important;
+  }
+
+  /* Grid view: collapse to single column on mobile */
+  .articles-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Hide keyboard shortcut hints on mobile */
+  .keyboard-hints {
+    display: none !important;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  /* Grid view: 2 columns on tablet */
+  .articles-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 

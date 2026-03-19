@@ -1,9 +1,83 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowUpRight, Clock, Globe, Loader, Languages, Search } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Clock, Globe, Loader, Languages, Search, Copy, Check, Bookmark } from "lucide-react";
 import { f, uiStrings } from "./shared/theme";
-import { formatFullDate, formatTime, getCachedArticle, getCachedArticles, fetchArticleContent, translateText, translateHtml } from "./shared/utils";
+import { formatFullDate, formatTime, getCachedArticle, getCachedArticles, fetchArticleContent, translateText, translateHtml, estimateReadingTime, trackArticleRead } from "./shared/utils";
 import { useTheme } from "./shared/ThemeContext";
+import { useBookmarks } from "./shared/useBookmarks";
+
+// ─── Social share icons (inline SVG) ───
+function XLogo() {
+  return <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.738-8.854L2.032 2.25H8.2l4.259 5.632 5.785-5.632zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+}
+function LinkedInLogo() {
+  return <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+}
+function FacebookLogo() {
+  return <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+}
+
+// ─── Share bar ───
+function ShareBar({ article, theme }) {
+  const [copied, setCopied] = useState(false);
+  const url        = article.link;
+  const shareUrl   = encodeURIComponent(url);
+  const shareTitle = encodeURIComponent(article.title);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    });
+  }
+
+  const socialLinks = [
+    { label: "X",        icon: <XLogo />,        href: `https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}` },
+    { label: "LinkedIn", icon: <LinkedInLogo />,  href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}` },
+    { label: "Facebook", icon: <FacebookLogo />,  href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
+  ];
+
+  const btnBase = {
+    display: "inline-flex", alignItems: "center", gap: 5,
+    padding: "6px 13px", border: `1px solid ${theme.border}`,
+    background: "transparent", textDecoration: "none",
+    fontFamily: f.sans, fontSize: 11, fontWeight: 500,
+    color: theme.dim, transition: "all 0.15s ease-out", cursor: "pointer",
+  };
+
+  return (
+    <div style={{ margin: "28px 0 8px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+      <span style={{
+        fontFamily: f.sans, fontSize: 9, fontWeight: 600,
+        color: theme.rule, letterSpacing: 1.8, textTransform: "uppercase",
+      }}>Share</span>
+      {socialLinks.map(({ label, icon, href }) => (
+        <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+          style={btnBase}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = theme.ink; e.currentTarget.style.color = theme.ink; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.dim; }}
+          aria-label={`Share on ${label}`}
+        >
+          {icon} {label}
+        </a>
+      ))}
+      <button onClick={handleCopy}
+        style={{
+          ...btnBase,
+          border: `1px solid ${copied ? theme.accent : theme.border}`,
+          background: copied ? theme.accentSoft : "transparent",
+          color: copied ? theme.accent : theme.dim,
+        }}
+        onMouseEnter={e => { if (!copied) { e.currentTarget.style.borderColor = theme.ink; e.currentTarget.style.color = theme.ink; } }}
+        onMouseLeave={e => { if (!copied) { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.dim; } }}
+        aria-label="Copy article link"
+      >
+        {copied ? <Check size={10} strokeWidth={2} /> : <Copy size={10} strokeWidth={1.5} />}
+        {copied ? "Copied!" : "Copy link"}
+      </button>
+    </div>
+  );
+}
 
 // ─── Reading Progress Bar ───
 function ReadingProgress({ theme }) {
@@ -83,6 +157,13 @@ export default function ArticleDetailPage() {
   const t = { ...uiStrings.en, ...(uiStrings[lang] || {}) };
 
   const article = location.state?.article || getCachedArticle(id);
+  const { toggle: toggleBookmark, isBookmarked } = useBookmarks();
+  const bookmarked = article ? isBookmarked(article.id) : false;
+
+  // Track this read for the "articles read today" counter
+  useEffect(() => {
+    if (article) trackArticleRead();
+  }, [article?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [content, setContent] = useState({ status: "idle", data: null });
   const [showTranslated, setShowTranslated] = useState(lang !== "en");
@@ -236,6 +317,23 @@ export default function ArticleDetailPage() {
                 }}>{formatFullDate(article.pubDate)}</time>
               </>
             )}
+            {/* Reading time — computed from full content once loaded, else from description */}
+            {(() => {
+              const text = fullContent?.content || article.description || "";
+              const mins = estimateReadingTime(text);
+              return (
+                <>
+                  <span style={{ color: theme.rule }} aria-hidden="true">·</span>
+                  <span style={{
+                    fontFamily: f.sans, fontSize: 11, color: theme.dim, fontWeight: 500,
+                    display: "inline-flex", alignItems: "center", gap: 3,
+                  }}>
+                    <Clock size={10} strokeWidth={1.5} />
+                    {mins} min read
+                  </span>
+                </>
+              );
+            })()}
           </div>
 
           {/* Category tags */}
@@ -252,12 +350,30 @@ export default function ArticleDetailPage() {
             </div>
           )}
 
-          {/* ─── Title ─── */}
-          <h1 style={{
-            fontFamily: f.display, fontSize: "clamp(26px, 5vw, 36px)", fontWeight: 400,
-            color: theme.ink, lineHeight: 1.25, letterSpacing: -0.5,
-            marginBottom: 16,
-          }}>{showTranslated && translatedTitle ? translatedTitle : article.title}</h1>
+          {/* ─── Title + bookmark ─── */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 16 }}>
+            <h1 style={{
+              fontFamily: f.display, fontSize: "clamp(26px, 5vw, 36px)", fontWeight: 400,
+              color: theme.ink, lineHeight: 1.25, letterSpacing: -0.5, flex: 1,
+            }}>{showTranslated && translatedTitle ? translatedTitle : article.title}</h1>
+            <button
+              onClick={() => toggleBookmark(article)}
+              aria-label={bookmarked ? "Remove bookmark" : "Bookmark this article"}
+              title={bookmarked ? "Remove bookmark" : "Save for later"}
+              style={{
+                flexShrink: 0, marginTop: 6,
+                background: "none", border: `1px solid ${bookmarked ? theme.accent : theme.border}`,
+                padding: "6px 8px", cursor: "pointer",
+                color: bookmarked ? theme.accent : theme.dim,
+                transition: "all 0.15s ease-out",
+                display: "flex", alignItems: "center",
+              }}
+              onMouseEnter={e => { if (!bookmarked) { e.currentTarget.style.borderColor = theme.ink; e.currentTarget.style.color = theme.ink; } }}
+              onMouseLeave={e => { if (!bookmarked) { e.currentTarget.style.borderColor = theme.border; e.currentTarget.style.color = theme.dim; } }}
+            >
+              <Bookmark size={14} strokeWidth={1.5} fill={bookmarked ? theme.accent : "none"} />
+            </button>
+          </div>
 
           {/* ─── Translate Toggle ─── */}
           {lang !== "en" && (
@@ -372,6 +488,9 @@ export default function ArticleDetailPage() {
           {t.readFull} {hostname} <ArrowUpRight size={16} strokeWidth={2} />
         </a>
 
+        {/* ─── Share bar ─── */}
+        <ShareBar article={article} theme={theme} />
+
         {/* ─── Related Articles ─── */}
         {relatedArticles.length > 0 && (
           <section style={{ marginTop: 48 }}>
@@ -426,20 +545,27 @@ export default function ArticleDetailPage() {
         </div>
 
         {/* ─── Footer ─── */}
-        <footer style={{ borderTop: `1px solid ${theme.ink}`, padding: "16px 0", marginTop: 48 }}>
-          <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-          }}>
+        <footer style={{ borderTop: `1px solid ${theme.border}`, padding: "16px 0", marginTop: 48 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontFamily: f.display, fontSize: 15, color: theme.ink, display: "flex", alignItems: "center", gap: 6 }}>
               <Globe size={14} strokeWidth={1.3} color={theme.ink} />
               The Atlas Report
             </span>
-            <a href="https://rycworks.com" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: f.sans, fontSize: 10, color: theme.dim, fontWeight: 500, textDecoration: "none", transition: "color 0.15s ease-out" }}
-              onMouseEnter={e => e.currentTarget.style.color = theme.ink}
-              onMouseLeave={e => e.currentTarget.style.color = theme.dim}>
-              Built by RYC
-            </a>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <a href="https://sociabuzz.com/rasyadg" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: f.sans, fontSize: 10, color: theme.dim, fontWeight: 500, textDecoration: "none", transition: "color 0.15s ease-out", display: "flex", alignItems: "center", gap: 4 }}
+                onMouseEnter={e => e.currentTarget.style.color = theme.accent}
+                onMouseLeave={e => e.currentTarget.style.color = theme.dim}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Support me
+              </a>
+              <a href="https://rycworks.com" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: f.sans, fontSize: 10, color: theme.dim, fontWeight: 500, textDecoration: "none", transition: "color 0.15s ease-out" }}
+                onMouseEnter={e => e.currentTarget.style.color = theme.ink}
+                onMouseLeave={e => e.currentTarget.style.color = theme.dim}>
+                Built by RYC
+              </a>
+            </div>
           </div>
         </footer>
 
