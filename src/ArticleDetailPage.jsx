@@ -544,33 +544,33 @@ export default function ArticleDetailPage() {
           {" back to feed"}
         </div>
 
-        {/* ─── Footer ─── */}
-        <footer style={{ borderTop: `1px solid ${theme.border}`, padding: "16px 0", marginTop: 48, marginLeft: -24, marginRight: -24, paddingLeft: 24, paddingRight: 24 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontFamily: f.display, fontSize: 15, color: theme.ink, display: "flex", alignItems: "center", gap: 6 }}>
-              <Globe size={14} strokeWidth={1.3} color={theme.ink} />
-              The Atlas Report
-            </span>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <a href="https://sociabuzz.com/rasyadg" target="_blank" rel="noopener noreferrer"
-                style={{ fontFamily: f.sans, fontSize: 10, color: theme.dim, fontWeight: 500, textDecoration: "none", transition: "color 0.15s ease-out", display: "flex", alignItems: "center", gap: 4 }}
-                onMouseEnter={e => e.currentTarget.style.color = theme.accent}
-                onMouseLeave={e => e.currentTarget.style.color = theme.dim}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                Support me
-              </a>
-              <a href="https://rycworks.com" target="_blank" rel="noopener noreferrer"
-                style={{ fontFamily: f.sans, fontSize: 10, color: theme.dim, fontWeight: 500, textDecoration: "none", transition: "color 0.15s ease-out" }}
-                onMouseEnter={e => e.currentTarget.style.color = theme.ink}
-                onMouseLeave={e => e.currentTarget.style.color = theme.dim}>
-                Built by RYC
-              </a>
-            </div>
-          </div>
-        </footer>
-
         <div style={{ height: 24 }} />
       </div>
+
+      {/* ─── Footer ─── */}
+      <footer style={{ borderTop: `1px solid ${theme.border}`, padding: "16px 24px", marginTop: 0 }}>
+        <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontFamily: f.display, fontSize: 15, color: theme.ink, display: "flex", alignItems: "center", gap: 6 }}>
+            <Globe size={14} strokeWidth={1.3} color={theme.ink} />
+            The Atlas Report
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <a href="https://sociabuzz.com/rasyadg" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: f.sans, fontSize: 10, color: theme.dim, fontWeight: 500, textDecoration: "none", transition: "color 0.15s ease-out", display: "flex", alignItems: "center", gap: 4 }}
+              onMouseEnter={e => e.currentTarget.style.color = theme.accent}
+              onMouseLeave={e => e.currentTarget.style.color = theme.dim}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Support me
+            </a>
+            <a href="https://rycworks.com" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: f.sans, fontSize: 10, color: theme.dim, fontWeight: 500, textDecoration: "none", transition: "color 0.15s ease-out" }}
+              onMouseEnter={e => e.currentTarget.style.color = theme.ink}
+              onMouseLeave={e => e.currentTarget.style.color = theme.dim}>
+              Built by RYC
+            </a>
+          </div>
+        </div>
+      </footer>
 
       {/* ─── Article Content Styles ─── */}
       <style>{`
