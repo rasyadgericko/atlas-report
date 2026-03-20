@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://atlasreport.news/</loc>
+    <loc>https://atlasreport.live/</loc>
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=US</loc>
+    <loc>https://atlasreport.live/?country=US</loc>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=GB</loc>
+    <loc>https://atlasreport.live/?country=GB</loc>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=DE</loc>
+    <loc>https://atlasreport.live/?country=DE</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=FR</loc>
+    <loc>https://atlasreport.live/?country=FR</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=JP</loc>
+    <loc>https://atlasreport.live/?country=JP</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=IN</loc>
+    <loc>https://atlasreport.live/?country=IN</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=BR</loc>
+    <loc>https://atlasreport.live/?country=BR</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=AU</loc>
+    <loc>https://atlasreport.live/?country=AU</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=CA</loc>
+    <loc>https://atlasreport.live/?country=CA</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://atlasreport.news/?country=ID</loc>
+    <loc>https://atlasreport.live/?country=ID</loc>
     <changefreq>hourly</changefreq>
     <priority>0.7</priority>
   </url>

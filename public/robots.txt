@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /article/
 
-Sitemap: https://atlasreport.news/sitemap.xml
+Sitemap: https://atlasreport.live/sitemap.xml
