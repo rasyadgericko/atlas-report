@@ -41,6 +41,39 @@ export const languages = [
   { code: "uk", name: "Ukrainian", native: "Українська" },
   { code: "sw", name: "Swahili", native: "Kiswahili" },
   { code: "tl", name: "Filipino", native: "Filipino" },
+  { code: "ru", name: "Russian", native: "Русский" },
+  { code: "nl", name: "Dutch", native: "Nederlands" },
+  { code: "sv", name: "Swedish", native: "Svenska" },
+  { code: "no", name: "Norwegian", native: "Norsk" },
+  { code: "da", name: "Danish", native: "Dansk" },
+  { code: "fi", name: "Finnish", native: "Suomi" },
+  { code: "el", name: "Greek", native: "Ελληνικά" },
+  { code: "cs", name: "Czech", native: "Čeština" },
+  { code: "ro", name: "Romanian", native: "Română" },
+  { code: "hu", name: "Hungarian", native: "Magyar" },
+  { code: "th", name: "Thai", native: "ไทย" },
+  { code: "vi", name: "Vietnamese", native: "Tiếng Việt" },
+  { code: "ms", name: "Malay", native: "Bahasa Melayu" },
+  { code: "bn", name: "Bengali", native: "বাংলা" },
+  { code: "ur", name: "Urdu", native: "اردو" },
+  { code: "fa", name: "Persian", native: "فارسی" },
+  { code: "he", name: "Hebrew", native: "עברית" },
+  { code: "ta", name: "Tamil", native: "தமிழ்" },
+  { code: "my", name: "Burmese", native: "မြန်မာ" },
+  { code: "km", name: "Khmer", native: "ខ្មែរ" },
+  { code: "am", name: "Amharic", native: "አማርኛ" },
+  { code: "sr", name: "Serbian", native: "Српски" },
+  { code: "hr", name: "Croatian", native: "Hrvatski" },
+  { code: "bg", name: "Bulgarian", native: "Български" },
+  { code: "sk", name: "Slovak", native: "Slovenčina" },
+  { code: "lt", name: "Lithuanian", native: "Lietuvių" },
+  { code: "lv", name: "Latvian", native: "Latviešu" },
+  { code: "et", name: "Estonian", native: "Eesti" },
+  { code: "ka", name: "Georgian", native: "ქართული" },
+  { code: "az", name: "Azerbaijani", native: "Azərbaycan" },
+  { code: "uz", name: "Uzbek", native: "O'zbek" },
+  { code: "ne", name: "Nepali", native: "नेपाली" },
+  { code: "si", name: "Sinhala", native: "සිංහල" },
 ];
 
 export const uiStrings = {
@@ -65,129 +98,365 @@ export const uiStrings = {
 
 // ─── Countries & Feeds ───
 export const countries = [
-  { code: "ALL", name: "All Countries", flag: "\uD83C\uDF0D", feeds: [
+  { code: "ALL", name: "All Countries", flag: "🌍", feeds: [
     { name: "BBC World", url: "https://feeds.bbci.co.uk/news/world/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
   ]},
-  { code: "AR", name: "Argentina", flag: "\uD83C\uDDE6\uD83C\uDDF7", feeds: [
+  { code: "AF", name: "Afghanistan", flag: "🇦🇫", feeds: [
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "DZ", name: "Algeria", flag: "🇩🇿", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "AR", name: "Argentina", flag: "🇦🇷", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
     { name: "Buenos Aires Times", url: "https://www.batimes.com.ar/feed" },
   ]},
-  { code: "AU", name: "Australia", flag: "\uD83C\uDDE6\uD83C\uDDFA", feeds: [
+  { code: "AU", name: "Australia", flag: "🇦🇺", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "ABC News AU", url: "https://www.abc.net.au/news/feed/2942460/rss.xml" },
   ]},
-  { code: "BR", name: "Brazil", flag: "\uD83C\uDDE7\uD83C\uDDF7", feeds: [
+  { code: "AT", name: "Austria", flag: "🇦🇹", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "The Local AT", url: "https://feeds.thelocal.com/rss/at" },
+  ]},
+  { code: "AZ", name: "Azerbaijan", flag: "🇦🇿", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "BD", name: "Bangladesh", flag: "🇧🇩", feeds: [
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "Dhaka Tribune", url: "https://www.dhakatribune.com/feed" },
+  ]},
+  { code: "BE", name: "Belgium", flag: "🇧🇪", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Brussels Times", url: "https://www.brusselstimes.com/feed" },
+  ]},
+  { code: "BR", name: "Brazil", flag: "🇧🇷", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
     { name: "Folha de S.Paulo", url: "https://www1.folha.uol.com.br/internacional/en/rss091.xml" },
   ]},
-  { code: "CA", name: "Canada", flag: "\uD83C\uDDE8\uD83C\uDDE6", feeds: [
+  { code: "KH", name: "Cambodia", flag: "🇰🇭", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "CM", name: "Cameroon", flag: "🇨🇲", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "CA", name: "Canada", flag: "🇨🇦", feeds: [
     { name: "BBC US & Canada", url: "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml" },
     { name: "NPR News", url: "https://feeds.npr.org/1001/rss.xml" },
   ]},
-  { code: "CN", name: "China", flag: "\uD83C\uDDE8\uD83C\uDDF3", feeds: [
+  { code: "CL", name: "Chile", flag: "🇨🇱", feeds: [
+    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
+    { name: "Santiago Times", url: "https://santiagotimes.cl/feed/" },
+  ]},
+  { code: "CN", name: "China", flag: "🇨🇳", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "SCMP", url: "https://www.scmp.com/rss/91/feed" },
   ]},
-  { code: "EG", name: "Egypt", flag: "\uD83C\uDDEA\uD83C\uDDEC", feeds: [
+  { code: "CO", name: "Colombia", flag: "🇨🇴", feeds: [
+    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
+    { name: "Colombia Reports", url: "https://colombiareports.com/feed/" },
+  ]},
+  { code: "HR", name: "Croatia", flag: "🇭🇷", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+  ]},
+  { code: "CU", name: "Cuba", flag: "🇨🇺", feeds: [
+    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "CZ", name: "Czech Republic", flag: "🇨🇿", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Prague Monitor", url: "https://praguemonitor.com/feed/" },
+  ]},
+  { code: "DK", name: "Denmark", flag: "🇩🇰", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "The Local DK", url: "https://feeds.thelocal.com/rss/dk" },
+  ]},
+  { code: "CD", name: "DR Congo", flag: "🇨🇩", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "EC", name: "Ecuador", flag: "🇪🇨", feeds: [
+    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "EG", name: "Egypt", flag: "🇪🇬", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
-  { code: "FR", name: "France", flag: "\uD83C\uDDEB\uD83C\uDDF7", feeds: [
+  { code: "ET", name: "Ethiopia", flag: "🇪🇹", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "FI", name: "Finland", flag: "🇫🇮", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+  ]},
+  { code: "FR", name: "France", flag: "🇫🇷", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "France 24", url: "https://www.france24.com/en/rss" },
     { name: "The Local FR", url: "https://feeds.thelocal.com/rss/fr" },
   ]},
-  { code: "DE", name: "Germany", flag: "\uD83C\uDDE9\uD83C\uDDEA", feeds: [
+  { code: "GE", name: "Georgia", flag: "🇬🇪", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "DE", name: "Germany", flag: "🇩🇪", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
     { name: "The Local DE", url: "https://feeds.thelocal.com/rss/de" },
   ]},
-  { code: "IN", name: "India", flag: "\uD83C\uDDEE\uD83C\uDDF3", feeds: [
+  { code: "GH", name: "Ghana", flag: "🇬🇭", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "GhanaWeb", url: "https://www.ghanaweb.com/GhanaHomePage/NewsArchive/rss.xml" },
+  ]},
+  { code: "GR", name: "Greece", flag: "🇬🇷", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Greek Reporter", url: "https://greekreporter.com/feed/" },
+  ]},
+  { code: "HU", name: "Hungary", flag: "🇭🇺", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+  ]},
+  { code: "IN", name: "India", flag: "🇮🇳", feeds: [
     { name: "BBC India", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
     { name: "NDTV", url: "https://feeds.feedburner.com/ndtvnews-top-stories" },
   ]},
-  { code: "ID", name: "Indonesia", flag: "\uD83C\uDDEE\uD83C\uDDE9", feeds: [
+  { code: "ID", name: "Indonesia", flag: "🇮🇩", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Antara News", url: "https://www.antaranews.com/rss/terkini" },
     { name: "Tempo.co", url: "https://rss.tempo.co/nasional" },
   ]},
-  { code: "IL", name: "Israel", flag: "\uD83C\uDDEE\uD83C\uDDF1", feeds: [
+  { code: "IQ", name: "Iraq", flag: "🇮🇶", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "IE", name: "Ireland", flag: "🇮🇪", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Irish Times", url: "https://www.irishtimes.com/cmlink/news-1.1319192" },
+  ]},
+  { code: "IL", name: "Israel", flag: "🇮🇱", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Times of Israel", url: "https://www.timesofisrael.com/feed/" },
   ]},
-  { code: "IT", name: "Italy", flag: "\uD83C\uDDEE\uD83C\uDDF9", feeds: [
+  { code: "IT", name: "Italy", flag: "🇮🇹", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "The Local IT", url: "https://feeds.thelocal.com/rss/it" },
   ]},
-  { code: "JP", name: "Japan", flag: "\uD83C\uDDEF\uD83C\uDDF5", feeds: [
+  { code: "JP", name: "Japan", flag: "🇯🇵", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Japan Times", url: "https://www.japantimes.co.jp/feed/" },
   ]},
-  { code: "KE", name: "Kenya", flag: "\uD83C\uDDF0\uD83C\uDDEA", feeds: [
+  { code: "JO", name: "Jordan", flag: "🇯🇴", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "KZ", name: "Kazakhstan", flag: "🇰🇿", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+  ]},
+  { code: "KE", name: "Kenya", flag: "🇰🇪", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Standard Kenya", url: "https://www.standardmedia.co.ke/rss/headlines.php" },
   ]},
-  { code: "MX", name: "Mexico", flag: "\uD83C\uDDF2\uD83C\uDDFD", feeds: [
-    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
-    { name: "Mexico News Daily", url: "https://mexiconewsdaily.com/feed/" },
+  { code: "KW", name: "Kuwait", flag: "🇰🇼", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
-  { code: "NG", name: "Nigeria", flag: "\uD83C\uDDF3\uD83C\uDDEC", feeds: [
+  { code: "LB", name: "Lebanon", flag: "🇱🇧", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "LY", name: "Libya", flag: "🇱🇾", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
-  { code: "PH", name: "Philippines", flag: "\uD83C\uDDF5\uD83C\uDDED", feeds: [
+  { code: "MY", name: "Malaysia", flag: "🇲🇾", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "Malay Mail", url: "https://www.malaymail.com/feed" },
+  ]},
+  { code: "MX", name: "Mexico", flag: "🇲🇽", feeds: [
+    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
+    { name: "Mexico News Daily", url: "https://mexiconewsdaily.com/feed/" },
+  ]},
+  { code: "MA", name: "Morocco", flag: "🇲🇦", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "MM", name: "Myanmar", flag: "🇲🇲", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "NP", name: "Nepal", flag: "🇳🇵", feeds: [
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "Kathmandu Post", url: "https://kathmandupost.com/feed" },
+  ]},
+  { code: "NL", name: "Netherlands", flag: "🇳🇱", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "DutchNews.nl", url: "https://www.dutchnews.nl/feed/" },
+  ]},
+  { code: "NZ", name: "New Zealand", flag: "🇳🇿", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "RNZ", url: "https://www.rnz.co.nz/rss/national.xml" },
+  ]},
+  { code: "NG", name: "Nigeria", flag: "🇳🇬", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "NO", name: "Norway", flag: "🇳🇴", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "The Local NO", url: "https://feeds.thelocal.com/rss/no" },
+  ]},
+  { code: "OM", name: "Oman", flag: "🇴🇲", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "PK", name: "Pakistan", flag: "🇵🇰", feeds: [
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "Dawn", url: "https://www.dawn.com/feed" },
+  ]},
+  { code: "PE", name: "Peru", flag: "🇵🇪", feeds: [
+    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "PH", name: "Philippines", flag: "🇵🇭", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Rappler", url: "https://www.rappler.com/feed/" },
     { name: "Inquirer", url: "https://newsinfo.inquirer.net/feed" },
   ]},
-  { code: "PL", name: "Poland", flag: "\uD83C\uDDF5\uD83C\uDDF1", feeds: [
+  { code: "PL", name: "Poland", flag: "🇵🇱", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "Notes from Poland", url: "https://notesfrompoland.com/feed/" },
   ]},
-  { code: "SA", name: "Saudi Arabia", flag: "\uD83C\uDDF8\uD83C\uDDE6", feeds: [
+  { code: "PT", name: "Portugal", flag: "🇵🇹", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Portugal News", url: "https://www.theportugalnews.com/feed" },
+  ]},
+  { code: "QA", name: "Qatar", flag: "🇶🇦", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
-  { code: "SG", name: "Singapore", flag: "\uD83C\uDDF8\uD83C\uDDEC", feeds: [
+  { code: "RO", name: "Romania", flag: "🇷🇴", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "Romania Insider", url: "https://www.romania-insider.com/feed" },
+  ]},
+  { code: "RU", name: "Russia", flag: "🇷🇺", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+  ]},
+  { code: "SA", name: "Saudi Arabia", flag: "🇸🇦", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "RS", name: "Serbia", flag: "🇷🇸", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+  ]},
+  { code: "SG", name: "Singapore", flag: "🇸🇬", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "CNA", url: "https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml" },
   ]},
-  { code: "ZA", name: "South Africa", flag: "\uD83C\uDDFF\uD83C\uDDE6", feeds: [
+  { code: "ZA", name: "South Africa", flag: "🇿🇦", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "News24", url: "https://feeds.news24.com/articles/news24/TopStories/rss" },
   ]},
-  { code: "KR", name: "South Korea", flag: "\uD83C\uDDF0\uD83C\uDDF7", feeds: [
+  { code: "KR", name: "South Korea", flag: "🇰🇷", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Korea Times", url: "https://www.koreatimes.co.kr/www/rss/nation.xml" },
   ]},
-  { code: "ES", name: "Spain", flag: "\uD83C\uDDEA\uD83C\uDDF8", feeds: [
+  { code: "ES", name: "Spain", flag: "🇪🇸", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "EL PAIS", url: "https://feeds.elpais.com/mrss-s/pages/ep/site/english.elpais.com/portada" },
     { name: "The Local ES", url: "https://feeds.thelocal.com/rss/es" },
   ]},
-  { code: "TR", name: "Turkey", flag: "\uD83C\uDDF9\uD83C\uDDF7", feeds: [
+  { code: "LK", name: "Sri Lanka", flag: "🇱🇰", feeds: [
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "SD", name: "Sudan", flag: "🇸🇩", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "SE", name: "Sweden", flag: "🇸🇪", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "The Local SE", url: "https://feeds.thelocal.com/rss/se" },
+  ]},
+  { code: "CH", name: "Switzerland", flag: "🇨🇭", feeds: [
+    { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
+    { name: "The Local CH", url: "https://feeds.thelocal.com/rss/ch" },
+  ]},
+  { code: "SY", name: "Syria", flag: "🇸🇾", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "TW", name: "Taiwan", flag: "🇹🇼", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "Focus Taiwan", url: "https://focustaiwan.tw/rss" },
+  ]},
+  { code: "TZ", name: "Tanzania", flag: "🇹🇿", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "TH", name: "Thailand", flag: "🇹🇭", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "Bangkok Post", url: "https://www.bangkokpost.com/rss/data/topstories.xml" },
+  ]},
+  { code: "TN", name: "Tunisia", flag: "🇹🇳", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "TR", name: "Turkey", flag: "🇹🇷", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Hurriyet Daily", url: "https://www.hurriyetdailynews.com/rss" },
     { name: "Daily Sabah", url: "https://www.dailysabah.com/rssFeed/Rss" },
   ]},
-  { code: "AE", name: "UAE", flag: "\uD83C\uDDE6\uD83C\uDDEA", feeds: [
+  { code: "AE", name: "UAE", flag: "🇦🇪", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
-  { code: "UA", name: "Ukraine", flag: "\uD83C\uDDFA\uD83C\uDDE6", feeds: [
+  { code: "UG", name: "Uganda", flag: "🇺🇬", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Daily Monitor", url: "https://www.monitor.co.ug/resource/rss/691150" },
+  ]},
+  { code: "UA", name: "Ukraine", flag: "🇺🇦", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "Ukrinform", url: "https://www.ukrinform.net/rss/block-lastnews" },
   ]},
-  { code: "GB", name: "United Kingdom", flag: "\uD83C\uDDEC\uD83C\uDDE7", feeds: [
+  { code: "GB", name: "United Kingdom", flag: "🇬🇧", feeds: [
     { name: "BBC UK", url: "https://feeds.bbci.co.uk/news/uk/rss.xml" },
     { name: "The Guardian", url: "https://www.theguardian.com/uk-news/rss" },
   ]},
-  { code: "US", name: "United States", flag: "\uD83C\uDDFA\uD83C\uDDF8", feeds: [
+  { code: "US", name: "United States", flag: "🇺🇸", feeds: [
     { name: "BBC US & Canada", url: "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml" },
     { name: "NPR News", url: "https://feeds.npr.org/1001/rss.xml" },
+  ]},
+  { code: "UZ", name: "Uzbekistan", flag: "🇺🇿", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+  ]},
+  { code: "VE", name: "Venezuela", flag: "🇻🇪", feeds: [
+    { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "VN", name: "Vietnam", flag: "🇻🇳", feeds: [
+    { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "VnExpress", url: "https://e.vnexpress.net/rss/news/latest.rss" },
+  ]},
+  { code: "YE", name: "Yemen", flag: "🇾🇪", feeds: [
+    { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  ]},
+  { code: "ZW", name: "Zimbabwe", flag: "🇿🇼", feeds: [
+    { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
 ];
 
@@ -198,4 +467,14 @@ export const geoCountryMap = {
   JP: "JP", CN: "CN", IN: "IN", KR: "KR", AU: "AU", ID: "ID",
   PH: "PH", SG: "SG", SA: "SA", AE: "AE", IL: "IL", TR: "TR",
   NG: "NG", ZA: "ZA", EG: "EG", KE: "KE",
+  AF: "AF", DZ: "DZ", AT: "AT", AZ: "AZ", BD: "BD", BE: "BE",
+  CL: "CL", CO: "CO", HR: "HR", CZ: "CZ", DK: "DK", EC: "EC",
+  ET: "ET", FI: "FI", GE: "GE", GH: "GH", GR: "GR", HU: "HU",
+  IQ: "IQ", IE: "IE", JO: "JO", KZ: "KZ", KW: "KW", LB: "LB",
+  LY: "LY", MY: "MY", MA: "MA", MM: "MM", NP: "NP", NL: "NL",
+  NZ: "NZ", NO: "NO", OM: "OM", PK: "PK", PE: "PE", PT: "PT",
+  QA: "QA", RO: "RO", RU: "RU", RS: "RS", LK: "LK", SD: "SD",
+  SE: "SE", CH: "CH", SY: "SY", TW: "TW", TZ: "TZ", TH: "TH",
+  TN: "TN", UG: "UG", UZ: "UZ", VE: "VE", VN: "VN", YE: "YE",
+  ZW: "ZW", KH: "KH", CM: "CM", CD: "CD", CU: "CU",
 };
