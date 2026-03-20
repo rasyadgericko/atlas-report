@@ -124,6 +124,92 @@ export function Select({ value, onChange, options, renderOption, label, theme })
   );
 }
 
+// ─── Loading Progress ───
+const loadingMessages = [
+  "Connecting to sources…",
+  "Scanning RSS feeds…",
+  "Gathering headlines…",
+  "Ranking trending stories…",
+  "Deduplicating articles…",
+  "Almost there…",
+];
+
+export function LoadingProgress({ theme }) {
+  const [msgIdx, setMsgIdx] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    // Animate progress bar with easing — fast at start, slows near end
+    const start = Date.now();
+    const duration = 8000; // 8s to reach ~92%
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const t = Math.min(elapsed / duration, 1);
+      // Ease-out curve: fast start, slow end, never hits 100
+      setProgress(Math.min(92, t * (2 - t) * 95));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    let raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    // Cycle through messages with crossfade
+    const interval = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setMsgIdx(i => (i + 1) % loadingMessages.length);
+        setFading(false);
+      }, 250);
+    }, 2200);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{
+      padding: "32px 0 24px",
+      animation: "fadeIn 0.4s ease-out both",
+    }}>
+      {/* Progress bar */}
+      <div style={{
+        height: 3, borderRadius: 2,
+        background: theme.border,
+        overflow: "hidden",
+        marginBottom: 16,
+      }}>
+        <div style={{
+          height: "100%", borderRadius: 2,
+          width: `${progress}%`,
+          background: theme.accent,
+          transition: "width 0.3s ease-out",
+        }} />
+      </div>
+
+      {/* Animated status text */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 10,
+        fontFamily: f.sans, fontSize: 12, color: theme.dim,
+        letterSpacing: "0.03em",
+        textTransform: "uppercase",
+      }}>
+        {/* Spinning dot */}
+        <div style={{
+          width: 6, height: 6, borderRadius: "50%",
+          background: theme.accent,
+          animation: "pulse 1.5s ease-in-out infinite",
+        }} />
+        <span style={{
+          transition: "opacity 0.25s ease",
+          opacity: fading ? 0 : 1,
+        }}>
+          {loadingMessages[msgIdx]}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ─── Skeleton Loader ───
 function SkeletonBar({ width, height, theme, delay = 0, borderRadius = 3 }) {
   return (

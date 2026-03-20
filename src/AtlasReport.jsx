@@ -3,7 +3,7 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Search, Clock, ExternalLink, X, RefreshCw, Globe, Languages, Sun, Moon, Bookmark, List, LayoutGrid } from "lucide-react";
 import { f, languages, uiStrings, countries, geoCountryMap } from "./shared/theme";
 import { fetchAllFeeds, formatTime, cacheArticles, translateBatch, getCachedAllFeeds, getArticlesReadToday } from "./shared/utils";
-import { Select, SkeletonRows } from "./shared/components";
+import { Select, SkeletonRows, LoadingProgress } from "./shared/components";
 import { useTheme } from "./shared/ThemeContext";
 import { useBookmarks } from "./shared/useBookmarks";
 
@@ -793,7 +793,10 @@ export default function AtlasReport() {
 
         {/* Articles or skeleton */}
         {loading && !showSaved ? (
-          <SkeletonRows theme={theme} />
+          <>
+            <LoadingProgress theme={theme} />
+            <SkeletonRows theme={theme} />
+          </>
         ) : (() => {
           // Determine which list to render
           const displayList = showSaved ? bookmarks : filteredArticles;
