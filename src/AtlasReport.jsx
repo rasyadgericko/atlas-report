@@ -262,12 +262,40 @@ function ArticleCard({ article, rank, t, translated, theme, onBookmark, isBookma
   );
 }
 
+// ─── Detect country from timezone (synchronous, no network) ───
+function detectCountryFromTimezone() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    const tzCountryMap = {
+      "America/New_York": "US", "America/Chicago": "US", "America/Denver": "US", "America/Los_Angeles": "US",
+      "America/Toronto": "CA", "America/Vancouver": "CA", "America/Mexico_City": "MX", "America/Sao_Paulo": "BR",
+      "America/Argentina/Buenos_Aires": "AR", "Europe/London": "GB", "Europe/Paris": "FR", "Europe/Berlin": "DE",
+      "Europe/Rome": "IT", "Europe/Madrid": "ES", "Europe/Warsaw": "PL", "Europe/Kiev": "UA", "Europe/Istanbul": "TR",
+      "Asia/Tokyo": "JP", "Asia/Shanghai": "CN", "Asia/Kolkata": "IN", "Asia/Seoul": "KR",
+      "Asia/Jakarta": "ID", "Asia/Manila": "PH", "Asia/Singapore": "SG", "Asia/Dubai": "AE",
+      "Asia/Riyadh": "SA", "Asia/Jerusalem": "IL", "Australia/Sydney": "AU",
+      "Africa/Lagos": "NG", "Africa/Johannesburg": "ZA", "Africa/Cairo": "EG", "Africa/Nairobi": "KE",
+    };
+    const code = tzCountryMap[tz];
+    if (code && geoCountryMap[code]) return geoCountryMap[code];
+  } catch { /* ignore */ }
+  return null;
+}
+
+// ─── Resolve initial country: URL param > sessionStorage > geo-detect > ALL ───
+function resolveInitialCountry(searchParams) {
+  return searchParams.get("country")
+    || sessionStorage.getItem("atlas-country")
+    || detectCountryFromTimezone()
+    || "ALL";
+}
+
 // ─── Main ───
 export default function AtlasReport() {
   const { theme, isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialCountry = searchParams.get("country") || sessionStorage.getItem("atlas-country") || "ALL";
+  const initialCountry = resolveInitialCountry(searchParams);
   const initialLang = searchParams.get("lang") || sessionStorage.getItem("atlas-lang") || "en";
 
   const [selectedCountry, setSelectedCountry] = useState(initialCountry);
@@ -277,7 +305,6 @@ export default function AtlasReport() {
   const [loading, setLoading] = useState(true);
   const [feedSources, setFeedSources] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
-  const [geoDetected, setGeoDetected] = useState(false);
   const [translations, setTranslations] = useState({});
   const [translating, setTranslating] = useState(false);
   const [focusedIdx, setFocusedIdx] = useState(-1);
@@ -362,30 +389,6 @@ export default function AtlasReport() {
 
     return () => { cancelled = true; };
   }, [selectedLanguage, articles, visibleCount, loading]);
-
-  // Auto-detect country from timezone (no network request, no console errors)
-  // Skip if country was already set via URL param or sessionStorage
-  useEffect(() => {
-    if (searchParams.get("country") || sessionStorage.getItem("atlas-country") || geoDetected) return;
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-      const tzCountryMap = {
-        "America/New_York": "US", "America/Chicago": "US", "America/Denver": "US", "America/Los_Angeles": "US",
-        "America/Toronto": "CA", "America/Vancouver": "CA", "America/Mexico_City": "MX", "America/Sao_Paulo": "BR",
-        "America/Argentina/Buenos_Aires": "AR", "Europe/London": "GB", "Europe/Paris": "FR", "Europe/Berlin": "DE",
-        "Europe/Rome": "IT", "Europe/Madrid": "ES", "Europe/Warsaw": "PL", "Europe/Kiev": "UA", "Europe/Istanbul": "TR",
-        "Asia/Tokyo": "JP", "Asia/Shanghai": "CN", "Asia/Kolkata": "IN", "Asia/Seoul": "KR",
-        "Asia/Jakarta": "ID", "Asia/Manila": "PH", "Asia/Singapore": "SG", "Asia/Dubai": "AE",
-        "Asia/Riyadh": "SA", "Asia/Jerusalem": "IL", "Australia/Sydney": "AU",
-        "Africa/Lagos": "NG", "Africa/Johannesburg": "ZA", "Africa/Cairo": "EG", "Africa/Nairobi": "KE",
-      };
-      const code = tzCountryMap[tz];
-      if (code && geoCountryMap[code]) {
-        setSelectedCountry(geoCountryMap[code]); // eslint-disable-line react-hooks/set-state-in-effect
-      }
-    } catch { /* fall back to ALL */ }
-    setGeoDetected(true);
-  }, [searchParams, geoDetected]);
 
   // Sync URL search params, html lang, and sessionStorage
   useEffect(() => {

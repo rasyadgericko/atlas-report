@@ -129,9 +129,9 @@ function SkeletonBar({ width, height, theme, delay = 0, borderRadius = 3 }) {
   return (
     <div style={{
       height, borderRadius, width,
-      background: `linear-gradient(90deg, ${theme.skeleton} 0%, ${theme.skeleton}88 40%, ${theme.skeleton} 80%)`,
-      backgroundSize: "800px 100%",
-      animation: `shimmerSlide 1.8s ${delay}s ease-in-out infinite`,
+      background: `linear-gradient(90deg, ${theme.skeleton} 0%, ${theme.skeleton}66 50%, ${theme.skeleton} 100%)`,
+      backgroundSize: "600px 100%",
+      animation: `shimmerSlide 2s ${delay}s ease-in-out infinite`,
     }} />
   );
 }
@@ -144,15 +144,15 @@ export function SkeletonRows({ theme }) {
         <div key={i} style={{
           display: "flex", gap: 16, padding: "22px 0",
           borderBottom: `1px solid ${theme.border}`,
-          opacity: 1 - (i - 1) * 0.12,
+          animation: `fadeIn 0.4s ${(i - 1) * 0.07}s ease-out both`,
         }}>
           {/* Rank number */}
           <SkeletonBar width={22} height={24} theme={theme} delay={i * 0.06} />
           {/* Text block */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-            <SkeletonBar width={`${78 - (i * 5) % 20}%`} height={18} theme={theme} delay={i * 0.08} />
+            <SkeletonBar width={`${82 - (i * 5) % 20}%`} height={18} theme={theme} delay={i * 0.08} />
             <SkeletonBar width={`${90 - (i * 7) % 15}%`} height={12} theme={theme} delay={i * 0.1} />
-            <SkeletonBar width={`${55 - (i * 9) % 20}%`} height={12} theme={theme} delay={i * 0.12} />
+            <SkeletonBar width={`${60 - (i * 9) % 20}%`} height={12} theme={theme} delay={i * 0.12} />
             <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
               <SkeletonBar width={70} height={10} theme={theme} delay={i * 0.14} />
               <SkeletonBar width={40} height={10} theme={theme} delay={i * 0.16} />

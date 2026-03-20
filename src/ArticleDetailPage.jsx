@@ -123,9 +123,9 @@ function ContentSkeleton({ theme }) {
         <div key={i} style={{
           height: 16, borderRadius: 3, marginBottom: l.mb,
           width: `${l.w}%`,
-          background: `linear-gradient(90deg, ${theme.skeleton} 0%, ${theme.skeleton}88 40%, ${theme.skeleton} 80%)`,
-          backgroundSize: "800px 100%",
-          animation: `shimmerSlide 1.8s ${i * 0.06}s ease-in-out infinite`,
+          background: `linear-gradient(90deg, ${theme.skeleton} 0%, ${theme.skeleton}66 50%, ${theme.skeleton} 100%)`,
+          backgroundSize: "600px 100%",
+          animation: `fadeIn 0.35s ${i * 0.04}s ease-out both, shimmerSlide 2s ${i * 0.06}s ease-in-out infinite`,
         }} />
       ))}
     </div>
