@@ -88,6 +88,7 @@ export default function GlobeHero({ countries, selectedCountry, onSelectCountry,
   const projectedPinsRef = useRef([])
   const isDraggingRef    = useRef(false)
   const panelOpenRef     = useRef(panelOpen)
+  const zoomedInRef      = useRef(false)   // true from pin click until zoom-out completes
   const zoomOutRef       = useRef(null)   // set by main effect, called when panel closes
 
   // Keep refs in sync with props
@@ -326,6 +327,7 @@ export default function GlobeHero({ countries, selectedCountry, onSelectCountry,
       // Stop rotation immediately (no lerp) — the animation itself controls rendering
       targetSpeed = 0
       rotateSpeed = 0
+      zoomedInRef.current = true
       if (animTimer) { animTimer.stop(); animTimer = null }
 
       const startRot    = [...rotation]
@@ -362,6 +364,7 @@ export default function GlobeHero({ countries, selectedCountry, onSelectCountry,
       if (animTimer) { animTimer.stop(); animTimer = null }
       const startScale  = proj.scale()
       const targetScale = radius
+      zoomedInRef.current = false
       if (Math.abs(startScale - targetScale) < 5) { targetSpeed = 0.22; return }
 
       const DURATION = 600
@@ -420,8 +423,8 @@ export default function GlobeHero({ countries, selectedCountry, onSelectCountry,
           const pin = nearestPin(mx, my)
           if (pin) { animateToPin(pin); return }
         }
-        // Resume rotation after idle drag — but not if panel is open
-        setTimeout(() => { if (!panelOpenRef.current) targetSpeed = 0.22 }, 2200)
+        // Resume rotation after idle drag — but not if panel is open or zoomed in
+        setTimeout(() => { if (!panelOpenRef.current && !zoomedInRef.current) targetSpeed = 0.22 }, 2200)
       }
       document.addEventListener("mousemove", onMove)
       document.addEventListener("mouseup", onUp)
@@ -442,10 +445,10 @@ export default function GlobeHero({ countries, selectedCountry, onSelectCountry,
       setHoveredCode(pin?.code ?? null)
       setTooltipPos({ x: mx, y: my })
       canvas.style.cursor = pin ? "pointer" : "grab"
-      // Smooth pause on hover, smooth resume when no pin — unless panel is open
+      // Smooth pause on hover, smooth resume when no pin — unless panel is open or zoomed in
       if (pin) {
         targetSpeed = 0
-      } else if (!panelOpenRef.current) {
+      } else if (!panelOpenRef.current && !zoomedInRef.current) {
         targetSpeed = 0.22
       }
       render()
@@ -455,7 +458,7 @@ export default function GlobeHero({ countries, selectedCountry, onSelectCountry,
       hoveredCodeRef.current = null
       setHoveredCode(null)
       canvas.style.cursor = "grab"
-      if (!panelOpenRef.current) targetSpeed = 0.22
+      if (!panelOpenRef.current && !zoomedInRef.current) targetSpeed = 0.22
       render()
     }
 
@@ -490,7 +493,7 @@ export default function GlobeHero({ countries, selectedCountry, onSelectCountry,
           const pin = nearestPin(t.clientX - r.left, t.clientY - r.top, 30)
           if (pin) { animateToPin(pin); return }
         }
-        setTimeout(() => { if (!panelOpenRef.current) targetSpeed = 0.22 }, 2200)
+        setTimeout(() => { if (!panelOpenRef.current && !zoomedInRef.current) targetSpeed = 0.22 }, 2200)
       }
       canvas.addEventListener("touchmove", onTouchMove, { passive: false })
       canvas.addEventListener("touchend", onTouchEnd)

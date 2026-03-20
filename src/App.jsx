@@ -12,10 +12,8 @@ function AnimatedRoutes() {
   return (
     <div
       key={location.pathname}
-      style={{ animation: "pageIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both" }}
+      style={{ animation: "pageIn 0.35s ease-out both" }}
       onAnimationEnd={e => {
-        // Remove animation so transform:translateY(0) doesn't create a new
-        // containing block and break position:fixed children (e.g. ReadingProgress)
         e.currentTarget.style.animation = "none";
         e.currentTarget.style.opacity = "1";
       }}

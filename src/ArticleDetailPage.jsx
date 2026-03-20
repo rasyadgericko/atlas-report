@@ -153,7 +153,7 @@ export default function ArticleDetailPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  const lang = new URLSearchParams(location.search).get("lang") || "en";
+  const lang = new URLSearchParams(location.search).get("lang") || sessionStorage.getItem("atlas-lang") || "en";
   const t = { ...uiStrings.en, ...(uiStrings[lang] || {}) };
 
   const article = location.state?.article || getCachedArticle(id);

@@ -267,8 +267,8 @@ export default function AtlasReport() {
   const { theme, isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialCountry = searchParams.get("country") || "ALL";
-  const initialLang = searchParams.get("lang") || "en";
+  const initialCountry = searchParams.get("country") || sessionStorage.getItem("atlas-country") || "ALL";
+  const initialLang = searchParams.get("lang") || sessionStorage.getItem("atlas-lang") || "en";
 
   const [selectedCountry, setSelectedCountry] = useState(initialCountry);
   const [selectedLanguage, setSelectedLanguage] = useState(initialLang);
@@ -386,13 +386,15 @@ export default function AtlasReport() {
     setGeoDetected(true);
   }, [searchParams, geoDetected]);
 
-  // Sync URL search params and html lang
+  // Sync URL search params, html lang, and sessionStorage
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedCountry !== "ALL") params.set("country", selectedCountry);
     if (selectedLanguage !== "en") params.set("lang", selectedLanguage);
     setSearchParams(params, { replace: true });
     document.documentElement.lang = selectedLanguage;
+    sessionStorage.setItem("atlas-country", selectedCountry);
+    sessionStorage.setItem("atlas-lang", selectedLanguage);
   }, [selectedCountry, selectedLanguage, setSearchParams]);
 
   const fetchNews = useCallback(async (countryCode, forceRefresh = false) => {
