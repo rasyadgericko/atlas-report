@@ -291,7 +291,7 @@ function resolveInitialCountry(searchParams) {
 }
 
 // ─── Main ───
-export default function AtlasReport() {
+export default function AtlasReport({ onShowIntro }) {
   const { theme, isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -521,10 +521,17 @@ export default function AtlasReport() {
           gap: 12, flexWrap: "wrap",
           transition: "padding 0.25s ease-out",
         }}>
-          <div style={{
-            display: "flex", alignItems: "center", gap: 10, minWidth: 0,
-            animation: "headerItemIn 0.6s 0.05s cubic-bezier(0.16, 1, 0.3, 1) both",
-          }}>
+          <div
+            onClick={onShowIntro}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onShowIntro?.(); } }}
+            style={{
+              display: "flex", alignItems: "center", gap: 10, minWidth: 0,
+              animation: "headerItemIn 0.6s 0.05s cubic-bezier(0.16, 1, 0.3, 1) both",
+              cursor: "pointer",
+            }}
+          >
             <Globe className="header-globe" size={headerCollapsed ? 18 : 24} strokeWidth={1.3} color={theme.ink}
               style={{ flexShrink: 0, transition: "all 0.25s ease-out" }} />
             <div style={{ minWidth: 0 }}>

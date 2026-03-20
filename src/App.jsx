@@ -1,13 +1,13 @@
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useState, useCallback } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import AtlasReport from './AtlasReport'
-import IntroScreen, { hasSeenIntro } from './IntroScreen'
+import IntroScreen, { hasSeenIntro, clearIntroDone } from './IntroScreen'
 
 const ArticleDetailPage = lazy(() => import('./ArticleDetailPage'))
 const GlobeMapPage      = lazy(() => import('./GlobeMapPage'))
 
 // Wraps route tree so key={pathname} triggers the pageIn animation on navigation
-function AnimatedRoutes() {
+function AnimatedRoutes({ onShowIntro }) {
   const location = useLocation()
   return (
     <div
@@ -19,7 +19,7 @@ function AnimatedRoutes() {
       }}
     >
       <Routes location={location}>
-        <Route path="/" element={<AtlasReport />} />
+        <Route path="/" element={<AtlasReport onShowIntro={onShowIntro} />} />
         <Route path="/globe" element={
           <Suspense fallback={null}>
             <GlobeMapPage />
@@ -38,13 +38,18 @@ function AnimatedRoutes() {
 function App() {
   const [introComplete, setIntroComplete] = useState(hasSeenIntro)
 
+  const showIntro = useCallback(() => {
+    clearIntroDone();
+    setIntroComplete(false);
+  }, []);
+
   return (
     <>
       {/* Intro screen overlays everything; content loads underneath */}
       {!introComplete && (
         <IntroScreen onEnter={() => setIntroComplete(true)} />
       )}
-      <AnimatedRoutes />
+      <AnimatedRoutes onShowIntro={showIntro} />
     </>
   )
 }

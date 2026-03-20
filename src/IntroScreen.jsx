@@ -15,6 +15,10 @@ function markIntroDone() {
   try { sessionStorage.setItem(INTRO_KEY, "1"); } catch { /* quota */ }
 }
 
+export function clearIntroDone() {
+  try { sessionStorage.removeItem(INTRO_KEY); } catch { /* ignore */ }
+}
+
 // Format today's date like a broadsheet masthead
 function mastheadDate() {
   return new Date().toLocaleDateString("en-US", {
