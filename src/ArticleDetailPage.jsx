@@ -109,13 +109,23 @@ function ReadingProgress({ theme }) {
 
 // ─── Content Loading Skeleton ───
 function ContentSkeleton({ theme }) {
+  const lines = [
+    // paragraph 1
+    { w: 100, mb: 12 }, { w: 95, mb: 12 }, { w: 88, mb: 12 }, { w: 72, mb: 28 },
+    // paragraph 2
+    { w: 98, mb: 12 }, { w: 84, mb: 12 }, { w: 92, mb: 12 }, { w: 60, mb: 28 },
+    // paragraph 3
+    { w: 96, mb: 12 }, { w: 78, mb: 12 }, { w: 45, mb: 0 },
+  ];
   return (
     <div style={{ padding: "8px 0" }} aria-busy="true" aria-label="Loading article content">
-      {[100, 95, 88, 70, 98, 82, 60, 96, 75, 90, 45].map((w, i) => (
+      {lines.map((l, i) => (
         <div key={i} style={{
-          height: 16, borderRadius: 2, marginBottom: 14,
-          width: `${w}%`, background: theme.skeleton,
-          animation: `shimmer 1.5s ${i * 0.08}s infinite`,
+          height: 16, borderRadius: 3, marginBottom: l.mb,
+          width: `${l.w}%`,
+          background: `linear-gradient(90deg, ${theme.skeleton} 0%, ${theme.skeleton}88 40%, ${theme.skeleton} 80%)`,
+          backgroundSize: "800px 100%",
+          animation: `shimmerSlide 1.8s ${i * 0.06}s ease-in-out infinite`,
         }} />
       ))}
     </div>
@@ -424,8 +434,8 @@ export default function ArticleDetailPage() {
         {contentLoading ? (
           <div>
             <div style={{
-              display: "flex", alignItems: "center", gap: 8, marginBottom: 20,
-              padding: "12px 16px", background: theme.surface,
+              display: "flex", alignItems: "center", gap: 8, marginBottom: 24,
+              padding: "12px 16px", background: theme.surface, borderRadius: 3,
             }}>
               <Loader size={14} strokeWidth={1.5} color={theme.dim} style={{ animation: "spin 1s linear infinite" }} />
               <span style={{ fontFamily: f.sans, fontSize: 12, color: theme.dim, fontWeight: 500 }}>

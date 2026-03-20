@@ -364,8 +364,9 @@ export default function AtlasReport() {
   }, [selectedLanguage, articles, visibleCount, loading]);
 
   // Auto-detect country from timezone (no network request, no console errors)
+  // Skip if country was already set via URL param or sessionStorage
   useEffect(() => {
-    if (searchParams.get("country") || geoDetected) return;
+    if (searchParams.get("country") || sessionStorage.getItem("atlas-country") || geoDetected) return;
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
       const tzCountryMap = {

@@ -82,9 +82,13 @@ body {
   to { transform: rotate(360deg); }
 }
 @keyframes shimmer {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.5; }
+  0% { opacity: 0.35; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.35; }
+}
+@keyframes shimmerSlide {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }

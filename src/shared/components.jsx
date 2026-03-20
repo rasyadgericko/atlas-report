@@ -125,44 +125,41 @@ export function Select({ value, onChange, options, renderOption, label, theme })
 }
 
 // ─── Skeleton Loader ───
+function SkeletonBar({ width, height, theme, delay = 0, borderRadius = 3 }) {
+  return (
+    <div style={{
+      height, borderRadius, width,
+      background: `linear-gradient(90deg, ${theme.skeleton} 0%, ${theme.skeleton}88 40%, ${theme.skeleton} 80%)`,
+      backgroundSize: "800px 100%",
+      animation: `shimmerSlide 1.8s ${delay}s ease-in-out infinite`,
+    }} />
+  );
+}
+
 export function SkeletonRows({ theme }) {
-  const rows = [1, 2, 3, 4, 5];
+  const rows = [1, 2, 3, 4, 5, 6];
   return (
     <div aria-busy="true" aria-label="Loading articles">
       {rows.map(i => (
         <div key={i} style={{
-          display: "flex", gap: 14, padding: "20px 0",
+          display: "flex", gap: 16, padding: "22px 0",
           borderBottom: `1px solid ${theme.border}`,
+          opacity: 1 - (i - 1) * 0.12,
         }}>
-          <div style={{
-            width: 26, height: 28, borderRadius: 2,
-            background: theme.skeleton, animation: "shimmer 1.5s infinite",
-          }} />
-          <div style={{ flex: 1 }}>
-            <div style={{
-              height: 18, borderRadius: 2, marginBottom: 8,
-              width: `${70 + (i * 7) % 25}%`, background: theme.skeleton,
-              animation: `shimmer 1.5s ${i * 0.1}s infinite`,
-            }} />
-            <div style={{
-              height: 13, borderRadius: 2, marginBottom: 6,
-              width: `${85 + (i * 11) % 15}%`, background: theme.skeleton,
-              animation: `shimmer 1.5s ${i * 0.15}s infinite`,
-            }} />
-            <div style={{
-              height: 13, borderRadius: 2, marginBottom: 10,
-              width: `${40 + (i * 13) % 30}%`, background: theme.skeleton,
-              animation: `shimmer 1.5s ${i * 0.2}s infinite`,
-            }} />
-            <div style={{ display: "flex", gap: 10 }}>
-              <div style={{ height: 10, width: 60, borderRadius: 2, background: theme.skeleton, animation: `shimmer 1.5s ${i * 0.25}s infinite` }} />
-              <div style={{ height: 10, width: 30, borderRadius: 2, background: theme.skeleton, animation: `shimmer 1.5s ${i * 0.3}s infinite` }} />
+          {/* Rank number */}
+          <SkeletonBar width={22} height={24} theme={theme} delay={i * 0.06} />
+          {/* Text block */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+            <SkeletonBar width={`${78 - (i * 5) % 20}%`} height={18} theme={theme} delay={i * 0.08} />
+            <SkeletonBar width={`${90 - (i * 7) % 15}%`} height={12} theme={theme} delay={i * 0.1} />
+            <SkeletonBar width={`${55 - (i * 9) % 20}%`} height={12} theme={theme} delay={i * 0.12} />
+            <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+              <SkeletonBar width={70} height={10} theme={theme} delay={i * 0.14} />
+              <SkeletonBar width={40} height={10} theme={theme} delay={i * 0.16} />
             </div>
           </div>
-          <div style={{
-            width: 88, height: 88, flexShrink: 0, borderRadius: 2,
-            background: theme.skeleton, animation: `shimmer 1.5s ${i * 0.1}s infinite`,
-          }} />
+          {/* Thumbnail placeholder */}
+          <SkeletonBar width={92} height={92} theme={theme} delay={i * 0.05} borderRadius={3} />
         </div>
       ))}
     </div>
