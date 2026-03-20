@@ -104,12 +104,14 @@ export const countries = [
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
   ]},
   { code: "AF", name: "Afghanistan", flag: "🇦🇫", feeds: [
-    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Khaama Press", url: "https://www.khaama.com/feed/" },
   ]},
   { code: "DZ", name: "Algeria", flag: "🇩🇿", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
   ]},
   { code: "AR", name: "Argentina", flag: "🇦🇷", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
@@ -126,10 +128,11 @@ export const countries = [
   { code: "AZ", name: "Azerbaijan", flag: "🇦🇿", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Trend News", url: "https://en.trend.az/rss" },
   ]},
   { code: "BD", name: "Bangladesh", flag: "🇧🇩", feeds: [
-    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
-    { name: "Dhaka Tribune", url: "https://www.dhakatribune.com/feed" },
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
+    { name: "Daily Star BD", url: "https://www.thedailystar.net/frontpage/rss.xml" },
   ]},
   { code: "BE", name: "Belgium", flag: "🇧🇪", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -142,10 +145,12 @@ export const countries = [
   { code: "KH", name: "Cambodia", flag: "🇰🇭", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Khmer Times", url: "https://www.khmertimeskh.com/feed/" },
   ]},
   { code: "CM", name: "Cameroon", flag: "🇨🇲", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Journal du Cameroun", url: "https://www.journalducameroun.com/en/feed/" },
   ]},
   { code: "CA", name: "Canada", flag: "🇨🇦", feeds: [
     { name: "BBC US & Canada", url: "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml" },
@@ -153,7 +158,7 @@ export const countries = [
   ]},
   { code: "CL", name: "Chile", flag: "🇨🇱", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
-    { name: "Santiago Times", url: "https://santiagotimes.cl/feed/" },
+    { name: "Santiago Times", url: "https://santiagotimes.com/feed/" },
   ]},
   { code: "CN", name: "China", flag: "🇨🇳", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
@@ -166,10 +171,12 @@ export const countries = [
   { code: "HR", name: "Croatia", flag: "🇭🇷", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+    { name: "Total Croatia News", url: "https://www.total-croatia-news.com/feed" },
   ]},
   { code: "CU", name: "Cuba", flag: "🇨🇺", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Havana Times", url: "https://havanatimes.org/feed/" },
   ]},
   { code: "CZ", name: "Czech Republic", flag: "🇨🇿", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -182,10 +189,12 @@ export const countries = [
   { code: "CD", name: "DR Congo", flag: "🇨🇩", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Radio Okapi", url: "https://www.radiookapi.net/feed" },
   ]},
   { code: "EC", name: "Ecuador", flag: "🇪🇨", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Ecuador Times", url: "https://www.ecuadortimes.net/feed/" },
   ]},
   { code: "EG", name: "Egypt", flag: "🇪🇬", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
@@ -195,10 +204,12 @@ export const countries = [
   { code: "ET", name: "Ethiopia", flag: "🇪🇹", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Fana BC", url: "https://www.fanabc.com/english/feed/" },
   ]},
   { code: "FI", name: "Finland", flag: "🇫🇮", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+    { name: "Yle News", url: "https://feeds.yle.fi/uutiset/v1/recent.rss?publisherIds=YLE_NEWS" },
   ]},
   { code: "FR", name: "France", flag: "🇫🇷", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -208,6 +219,7 @@ export const countries = [
   { code: "GE", name: "Georgia", flag: "🇬🇪", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Civil Georgia", url: "https://civil.ge/feed" },
   ]},
   { code: "DE", name: "Germany", flag: "🇩🇪", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -216,7 +228,7 @@ export const countries = [
   ]},
   { code: "GH", name: "Ghana", flag: "🇬🇭", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
-    { name: "GhanaWeb", url: "https://www.ghanaweb.com/GhanaHomePage/NewsArchive/rss.xml" },
+    { name: "Ghana News Agency", url: "https://newsghana.com.gh/feed/" },
   ]},
   { code: "GR", name: "Greece", flag: "🇬🇷", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -225,9 +237,10 @@ export const countries = [
   { code: "HU", name: "Hungary", flag: "🇭🇺", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+    { name: "Budapest Times", url: "https://www.budapesttimes.hu/feed/" },
   ]},
   { code: "IN", name: "India", flag: "🇮🇳", feeds: [
-    { name: "BBC India", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "BBC India", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "NDTV", url: "https://feeds.feedburner.com/ndtvnews-top-stories" },
   ]},
   { code: "ID", name: "Indonesia", flag: "🇮🇩", feeds: [
@@ -238,6 +251,7 @@ export const countries = [
   { code: "IQ", name: "Iraq", flag: "🇮🇶", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Iraqi News", url: "https://www.iraqinews.com/feed/" },
   ]},
   { code: "IE", name: "Ireland", flag: "🇮🇪", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -245,7 +259,7 @@ export const countries = [
   ]},
   { code: "IL", name: "Israel", flag: "🇮🇱", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
-    { name: "Times of Israel", url: "https://www.timesofisrael.com/feed/" },
+    { name: "Jerusalem Post", url: "https://www.jpost.com/rss/rssfeedsfrontpage.aspx" },
   ]},
   { code: "IT", name: "Italy", flag: "🇮🇹", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -258,10 +272,12 @@ export const countries = [
   { code: "JO", name: "Jordan", flag: "🇯🇴", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
   { code: "KZ", name: "Kazakhstan", flag: "🇰🇿", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+    { name: "Astana Times", url: "https://astanatimes.com/feed/" },
   ]},
   { code: "KE", name: "Kenya", flag: "🇰🇪", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
@@ -270,18 +286,21 @@ export const countries = [
   { code: "KW", name: "Kuwait", flag: "🇰🇼", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Arab Times", url: "https://www.arabtimesonline.com/feed/" },
   ]},
   { code: "LB", name: "Lebanon", flag: "🇱🇧", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Naharnet", url: "https://www.naharnet.com/stories/rss" },
   ]},
   { code: "LY", name: "Libya", flag: "🇱🇾", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Libya Herald", url: "https://www.libyaherald.com/feed/" },
   ]},
   { code: "MY", name: "Malaysia", flag: "🇲🇾", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
-    { name: "Malay Mail", url: "https://www.malaymail.com/feed" },
+    { name: "Malay Mail", url: "https://www.malaymail.com/feed/rss/malaysia" },
   ]},
   { code: "MX", name: "Mexico", flag: "🇲🇽", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
@@ -290,13 +309,15 @@ export const countries = [
   { code: "MA", name: "Morocco", flag: "🇲🇦", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
   { code: "MM", name: "Myanmar", flag: "🇲🇲", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Myanmar Now", url: "https://myanmar-now.org/en/feed" },
   ]},
   { code: "NP", name: "Nepal", flag: "🇳🇵", feeds: [
-    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Kathmandu Post", url: "https://kathmandupost.com/feed" },
   ]},
   { code: "NL", name: "Netherlands", flag: "🇳🇱", feeds: [
@@ -318,14 +339,16 @@ export const countries = [
   { code: "OM", name: "Oman", flag: "🇴🇲", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Times of Oman", url: "https://timesofoman.com/feed" },
   ]},
   { code: "PK", name: "Pakistan", flag: "🇵🇰", feeds: [
-    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Dawn", url: "https://www.dawn.com/feed" },
   ]},
   { code: "PE", name: "Peru", flag: "🇵🇪", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Peru Reports", url: "https://perureports.com/feed/" },
   ]},
   { code: "PH", name: "Philippines", flag: "🇵🇭", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
@@ -338,11 +361,12 @@ export const countries = [
   ]},
   { code: "PT", name: "Portugal", flag: "🇵🇹", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
-    { name: "Portugal News", url: "https://www.theportugalnews.com/feed" },
+    { name: "Portugal Resident", url: "https://www.portugalresident.com/feed/" },
   ]},
   { code: "QA", name: "Qatar", flag: "🇶🇦", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Gulf Times", url: "https://www.gulf-times.com/rss" },
   ]},
   { code: "RO", name: "Romania", flag: "🇷🇴", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -351,6 +375,7 @@ export const countries = [
   { code: "RU", name: "Russia", flag: "🇷🇺", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+    { name: "Moscow Times", url: "https://www.themoscowtimes.com/rss/news" },
   ]},
   { code: "SA", name: "Saudi Arabia", flag: "🇸🇦", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
@@ -359,6 +384,7 @@ export const countries = [
   { code: "RS", name: "Serbia", flag: "🇷🇸", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+    { name: "Balkan Insight", url: "https://balkaninsight.com/feed/" },
   ]},
   { code: "SG", name: "Singapore", flag: "🇸🇬", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
@@ -378,12 +404,14 @@ export const countries = [
     { name: "The Local ES", url: "https://feeds.thelocal.com/rss/es" },
   ]},
   { code: "LK", name: "Sri Lanka", flag: "🇱🇰", feeds: [
-    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/south_asia/rss.xml" },
+    { name: "BBC South Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Colombo Page", url: "http://www.colombopage.com/archive_26A/rss.xml" },
   ]},
   { code: "SD", name: "Sudan", flag: "🇸🇩", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
   ]},
   { code: "SE", name: "Sweden", flag: "🇸🇪", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -396,22 +424,27 @@ export const countries = [
   { code: "SY", name: "Syria", flag: "🇸🇾", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Syria Direct", url: "https://syriadirect.org/feed/" },
   ]},
   { code: "TW", name: "Taiwan", flag: "🇹🇼", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
-    { name: "Focus Taiwan", url: "https://focustaiwan.tw/rss" },
+    { name: "Focus Taiwan", url: "https://focustaiwan.tw/rss/latest" },
   ]},
   { code: "TZ", name: "Tanzania", flag: "🇹🇿", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Daily News TZ", url: "https://dailynews.co.tz/feed/" },
   ]},
   { code: "TH", name: "Thailand", flag: "🇹🇭", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "Bangkok Post", url: "https://www.bangkokpost.com/rss/data/topstories.xml" },
+    { name: "The Nation Thailand", url: "https://www.nationthailand.com/rss" },
+    { name: "Thaiger", url: "https://thethaiger.com/feed" },
   ]},
   { code: "TN", name: "Tunisia", flag: "🇹🇳", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Tunisia Live", url: "https://www.tunisia-live.net/feed/" },
   ]},
   { code: "TR", name: "Turkey", flag: "🇹🇷", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
@@ -424,7 +457,7 @@ export const countries = [
   ]},
   { code: "UG", name: "Uganda", flag: "🇺🇬", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
-    { name: "Daily Monitor", url: "https://www.monitor.co.ug/resource/rss/691150" },
+    { name: "New Vision", url: "https://www.newvision.co.ug/feed" },
   ]},
   { code: "UA", name: "Ukraine", flag: "🇺🇦", feeds: [
     { name: "BBC Europe", url: "https://feeds.bbci.co.uk/news/world/europe/rss.xml" },
@@ -441,22 +474,26 @@ export const countries = [
   { code: "UZ", name: "Uzbekistan", flag: "🇺🇿", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
     { name: "DW News", url: "https://rss.dw.com/rdf/rss-en-all" },
+    { name: "Gazette.uz", url: "https://www.gazeta.uz/en/rss/" },
   ]},
   { code: "VE", name: "Venezuela", flag: "🇻🇪", feeds: [
     { name: "BBC Latin America", url: "https://feeds.bbci.co.uk/news/world/latin_america/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "Caracas Chronicles", url: "https://www.caracaschronicles.com/feed/" },
   ]},
   { code: "VN", name: "Vietnam", flag: "🇻🇳", feeds: [
     { name: "BBC Asia", url: "https://feeds.bbci.co.uk/news/world/asia/rss.xml" },
-    { name: "VnExpress", url: "https://e.vnexpress.net/rss/news/latest.rss" },
+    { name: "VnExpress", url: "https://e.vnexpress.net/rss/latest.rss" },
   ]},
   { code: "YE", name: "Yemen", flag: "🇾🇪", feeds: [
     { name: "BBC Middle East", url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml" },
+    { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   ]},
   { code: "ZW", name: "Zimbabwe", flag: "🇿🇼", feeds: [
     { name: "BBC Africa", url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml" },
     { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+    { name: "ZimLive", url: "https://www.zimlive.com/feed/" },
   ]},
 ];
 

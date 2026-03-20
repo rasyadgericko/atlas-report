@@ -643,7 +643,7 @@ export default function AtlasReport({ onShowIntro }) {
           display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
         }}>
           <Select value={selectedCountry} onChange={v => { setSelectedCountry(v); setFocusedIdx(-1); }}
-            options={countries} label={t.selectCountry} theme={theme}
+            options={countries} label={t.selectCountry} theme={theme} searchable
             renderOption={(o) => (
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ fontSize: 14 }}>{o?.flag}</span>
@@ -652,7 +652,7 @@ export default function AtlasReport({ onShowIntro }) {
             )} />
           <Select value={selectedLanguage} onChange={setSelectedLanguage}
             options={languages.map(l => ({ ...l, id: l.code }))}
-            label={t.language} theme={theme}
+            label={t.language} theme={theme} searchable
             renderOption={(o) => (
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span>{o?.native}</span>

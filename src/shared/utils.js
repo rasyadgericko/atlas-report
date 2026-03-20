@@ -319,6 +319,114 @@ export async function fetchRSSFeed(feedUrl, feedName) {
   }
 }
 
+// Country keywords for filtering regional feeds (name, capital, major cities, demonyms)
+const COUNTRY_KEYWORDS = {
+  AF: ["afghanistan","afghan","kabul","kandahar"],
+  DZ: ["algeria","algerian","algiers","oran"],
+  AR: ["argentina","argentine","buenos aires","mendoza"],
+  AT: ["austria","austrian","vienna","salzburg"],
+  AU: ["australia","australian","sydney","melbourne","canberra"],
+  AZ: ["azerbaijan","azerbaijani","baku"],
+  BD: ["bangladesh","bangladeshi","dhaka","chittagong"],
+  BE: ["belgium","belgian","brussels","antwerp"],
+  BR: ["brazil","brazilian","brasilia","sao paulo","rio de janeiro"],
+  KH: ["cambodia","cambodian","phnom penh"],
+  CM: ["cameroon","cameroonian","yaounde","douala"],
+  CA: ["canada","canadian","ottawa","toronto","vancouver","montreal"],
+  CL: ["chile","chilean","santiago","valparaiso"],
+  CN: ["china","chinese","beijing","shanghai","hong kong","shenzhen"],
+  CO: ["colombia","colombian","bogota","medellin"],
+  CD: ["congo","congolese","kinshasa","drc"],
+  HR: ["croatia","croatian","zagreb"],
+  CU: ["cuba","cuban","havana"],
+  CZ: ["czech","czechia","prague","brno"],
+  DK: ["denmark","danish","copenhagen"],
+  EC: ["ecuador","ecuadorian","quito","guayaquil"],
+  EG: ["egypt","egyptian","cairo","alexandria"],
+  ET: ["ethiopia","ethiopian","addis ababa"],
+  FI: ["finland","finnish","helsinki"],
+  FR: ["france","french","paris","marseille","lyon"],
+  GE: ["georgia","georgian","tbilisi"],
+  DE: ["germany","german","berlin","munich","frankfurt"],
+  GH: ["ghana","ghanaian","accra","kumasi"],
+  GR: ["greece","greek","athens","thessaloniki"],
+  HU: ["hungary","hungarian","budapest"],
+  IN: ["india","indian","delhi","mumbai","bangalore","kolkata"],
+  ID: ["indonesia","indonesian","jakarta","surabaya","bali"],
+  IQ: ["iraq","iraqi","baghdad","mosul","basra"],
+  IE: ["ireland","irish","dublin","cork"],
+  IL: ["israel","israeli","jerusalem","tel aviv","gaza"],
+  IT: ["italy","italian","rome","milan","naples"],
+  JP: ["japan","japanese","tokyo","osaka","kyoto"],
+  JO: ["jordan","jordanian","amman"],
+  KZ: ["kazakhstan","kazakh","astana","almaty"],
+  KE: ["kenya","kenyan","nairobi","mombasa"],
+  KW: ["kuwait","kuwaiti"],
+  LB: ["lebanon","lebanese","beirut"],
+  LY: ["libya","libyan","tripoli","benghazi"],
+  MY: ["malaysia","malaysian","kuala lumpur","penang"],
+  MA: ["morocco","moroccan","rabat","casablanca","marrakech"],
+  MX: ["mexico","mexican","mexico city","guadalajara"],
+  MM: ["myanmar","burmese","yangon","naypyidaw"],
+  NP: ["nepal","nepalese","nepali","kathmandu"],
+  NL: ["netherlands","dutch","amsterdam","rotterdam","hague"],
+  NZ: ["new zealand","zealand","auckland","wellington"],
+  NG: ["nigeria","nigerian","lagos","abuja"],
+  NO: ["norway","norwegian","oslo","bergen"],
+  OM: ["oman","omani","muscat"],
+  PK: ["pakistan","pakistani","islamabad","karachi","lahore"],
+  PE: ["peru","peruvian","lima","cusco"],
+  PH: ["philippines","filipino","manila","cebu","davao"],
+  PL: ["poland","polish","warsaw","krakow"],
+  PT: ["portugal","portuguese","lisbon","porto"],
+  QA: ["qatar","qatari","doha"],
+  RO: ["romania","romanian","bucharest"],
+  RU: ["russia","russian","moscow","putin","kremlin","st petersburg"],
+  SA: ["saudi","arabia","riyadh","jeddah","mecca"],
+  RS: ["serbia","serbian","belgrade"],
+  SG: ["singapore","singaporean"],
+  ZA: ["south africa","african","johannesburg","cape town","pretoria"],
+  KR: ["south korea","korean","seoul","busan"],
+  ES: ["spain","spanish","madrid","barcelona","seville"],
+  LK: ["sri lanka","lankan","colombo"],
+  SD: ["sudan","sudanese","khartoum"],
+  SE: ["sweden","swedish","stockholm","gothenburg"],
+  CH: ["switzerland","swiss","zurich","geneva","bern"],
+  SY: ["syria","syrian","damascus","aleppo"],
+  TW: ["taiwan","taiwanese","taipei"],
+  TZ: ["tanzania","tanzanian","dar es salaam","dodoma"],
+  TH: ["thailand","thai","bangkok","phuket","chiang mai"],
+  TN: ["tunisia","tunisian","tunis"],
+  TR: ["turkey","turkish","ankara","istanbul","erdogan"],
+  UG: ["uganda","ugandan","kampala"],
+  AE: ["uae","emirates","emirati","dubai","abu dhabi"],
+  UA: ["ukraine","ukrainian","kyiv","zelensky","odesa"],
+  GB: ["uk","britain","british","london","england","scotland","wales"],
+  US: ["us","usa","united states","american","washington","new york","trump","biden"],
+  UZ: ["uzbekistan","uzbek","tashkent"],
+  VE: ["venezuela","venezuelan","caracas","maduro"],
+  VN: ["vietnam","vietnamese","hanoi","ho chi minh"],
+  YE: ["yemen","yemeni","sanaa","aden"],
+  ZW: ["zimbabwe","zimbabwean","harare"],
+};
+
+// Check if any feeds are regional (BBC regional, Al Jazeera, DW) vs local
+function hasLocalFeed(feedList) {
+  const regional = ["bbc","al jazeera","dw news"];
+  return feedList.some(fd => !regional.some(r => fd.name.toLowerCase().includes(r)));
+}
+
+// Score how relevant an article is to a country
+function countryRelevance(article, countryCode) {
+  const keywords = COUNTRY_KEYWORDS[countryCode];
+  if (!keywords) return 1; // no keywords = don't filter
+  const text = `${article.title} ${article.description || ""}`.toLowerCase();
+  for (const kw of keywords) {
+    if (text.includes(kw)) return 1;
+  }
+  return 0;
+}
+
 export async function fetchAllFeeds(feedList, countryCode) {
   const results = await Promise.allSettled(feedList.map(fd => fetchRSSFeed(fd.url, fd.name)));
   const all = results.filter(r => r.status === "fulfilled").flatMap(r => r.value);
@@ -329,7 +437,16 @@ export async function fetchAllFeeds(feedList, countryCode) {
     seen.add(key);
     return true;
   });
-  const ranked = rankArticles(deduped, all);
+
+  // For countries with only regional feeds, filter articles by country relevance
+  let filtered = deduped;
+  if (countryCode && countryCode !== "ALL" && !hasLocalFeed(feedList)) {
+    const relevant = deduped.filter(a => countryRelevance(a, countryCode) > 0);
+    // Only apply filter if we get enough results; fall back to all articles otherwise
+    if (relevant.length >= 3) filtered = relevant;
+  }
+
+  const ranked = rankArticles(filtered, all);
   if (countryCode) setCachedAllFeeds(countryCode, ranked);
   return ranked;
 }

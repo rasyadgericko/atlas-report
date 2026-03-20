@@ -2,13 +2,26 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { f } from "./theme";
 
-// ─── Select Component ───
-export function Select({ value, onChange, options, renderOption, label, theme }) {
+// ─── Select Component with Search ───
+export function Select({ value, onChange, options, renderOption, label, theme, searchable = false }) {
   const [open, setOpen] = useState(false);
   const [focusIdx, setFocusIdx] = useState(-1);
+  const [query, setQuery] = useState("");
   const ref = useRef(null);
   const listRef = useRef(null);
+  const searchRef = useRef(null);
   const selected = options.find(o => (o.code || o.id) === value);
+
+  // Filter options by search query
+  const filtered = searchable && query
+    ? options.filter(o => {
+        const q = query.toLowerCase();
+        const name = (o.name || "").toLowerCase();
+        const native = (o.native || "").toLowerCase();
+        const code = (o.code || o.id || "").toLowerCase();
+        return name.includes(q) || native.includes(q) || code.includes(q);
+      })
+    : options;
 
   useEffect(() => {
     if (!open) return;
@@ -17,12 +30,14 @@ export function Select({ value, onChange, options, renderOption, label, theme })
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
 
-  // Reset focus index when dropdown opens
+  // Reset state and focus search input when dropdown opens
   const openDropdown = useCallback(() => {
+    setQuery("");
     const idx = options.findIndex(o => (o.code || o.id) === value);
     setFocusIdx(idx >= 0 ? idx : 0);
     setOpen(true);
-  }, [options, value]);
+    if (searchable) setTimeout(() => searchRef.current?.focus(), 0);
+  }, [options, value, searchable]);
 
   // Scroll focused item into view
   useEffect(() => {
@@ -32,6 +47,9 @@ export function Select({ value, onChange, options, renderOption, label, theme })
       items[focusIdx].scrollIntoView({ block: "nearest" });
     }
   }, [focusIdx, open]);
+
+  // Reset focus when query changes
+  useEffect(() => { setFocusIdx(0); }, [query]);
 
   const handleKeyDown = useCallback((e) => {
     if (!open) {
@@ -45,17 +63,16 @@ export function Select({ value, onChange, options, renderOption, label, theme })
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setFocusIdx(prev => Math.min(prev + 1, options.length - 1));
+        setFocusIdx(prev => Math.min(prev + 1, filtered.length - 1));
         break;
       case "ArrowUp":
         e.preventDefault();
         setFocusIdx(prev => Math.max(prev - 1, 0));
         break;
       case "Enter":
-      case " ":
         e.preventDefault();
-        if (focusIdx >= 0) {
-          const opt = options[focusIdx];
+        if (focusIdx >= 0 && filtered[focusIdx]) {
+          const opt = filtered[focusIdx];
           onChange(opt.code || opt.id);
           setOpen(false);
         }
@@ -65,7 +82,7 @@ export function Select({ value, onChange, options, renderOption, label, theme })
         setOpen(false);
         break;
     }
-  }, [open, focusIdx, options, onChange, openDropdown]);
+  }, [open, focusIdx, filtered, onChange, openDropdown]);
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
@@ -88,36 +105,60 @@ export function Select({ value, onChange, options, renderOption, label, theme })
       </button>
       {open && (
         <div
-          ref={listRef}
           role="listbox"
           aria-label={label}
           onKeyDown={handleKeyDown}
           style={{
             position: "absolute", top: "calc(100% + 2px)", left: 0, minWidth: "100%",
-            maxHeight: 340, overflowY: "auto", background: theme.card, border: `1px solid ${theme.border}`,
+            maxHeight: 380, overflowY: "auto", background: theme.card, border: `1px solid ${theme.border}`,
             boxShadow: "0 6px 24px rgba(0,0,0,0.12)", zIndex: 50,
           }}>
-          {options.map((opt, i) => {
-            const active = (opt.code || opt.id) === value;
-            const focused = i === focusIdx;
-            return (
-              <button key={opt.code || opt.id}
-                role="option"
-                aria-selected={active}
-                onClick={() => { onChange(opt.code || opt.id); setOpen(false); }}
-                onMouseEnter={() => setFocusIdx(i)}
+          {searchable && (
+            <div style={{ padding: "6px 8px", position: "sticky", top: 0, background: theme.card, zIndex: 1,
+              borderBottom: `1px solid ${theme.border}` }}>
+              <input
+                ref={searchRef}
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search…"
                 style={{
-                  display: "flex", alignItems: "center", gap: 8, width: "100%",
-                  padding: "8px 12px", border: "none", textAlign: "left",
-                  background: active ? theme.surface : focused ? theme.surface : "transparent",
-                  cursor: "pointer", fontFamily: f.sans, fontSize: 13,
-                  fontWeight: active ? 600 : 400, color: active ? theme.ink : theme.text,
-                  transition: "background 0.1s ease-out",
-                }}>
-                {renderOption ? renderOption(opt) : opt.name}
-              </button>
-            );
-          })}
+                  width: "100%", padding: "6px 8px", border: `1px solid ${theme.border}`,
+                  background: theme.surface, color: theme.text, fontFamily: f.sans,
+                  fontSize: 12, outline: "none",
+                }}
+              />
+            </div>
+          )}
+          <div ref={listRef}>
+            {filtered.length === 0 && (
+              <div style={{ padding: "12px", fontFamily: f.sans, fontSize: 12, color: theme.dim, textAlign: "center" }}>
+                No results
+              </div>
+            )}
+            {filtered.map((opt, i) => {
+              const active = (opt.code || opt.id) === value;
+              const focused = i === focusIdx;
+              return (
+                <button key={opt.code || opt.id}
+                  role="option"
+                  aria-selected={active}
+                  onClick={() => { onChange(opt.code || opt.id); setOpen(false); }}
+                  onMouseEnter={() => setFocusIdx(i)}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8, width: "100%",
+                    padding: "8px 12px", border: "none", textAlign: "left",
+                    background: active ? theme.surface : focused ? theme.surface : "transparent",
+                    cursor: "pointer", fontFamily: f.sans, fontSize: 13,
+                    fontWeight: active ? 600 : 400, color: active ? theme.ink : theme.text,
+                    transition: "background 0.1s ease-out",
+                  }}>
+                  {renderOption ? renderOption(opt) : opt.name}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
